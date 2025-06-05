@@ -1,7 +1,9 @@
+import 'package:carbon_root_analytics/features/responsive/view/widgets/responsive_padding.dart';
 import 'package:flutter/material.dart';
 
 class HomeHeroSection extends StatefulWidget {
-  const HomeHeroSection({super.key});
+  final VoidCallback scrollToServices;
+  const HomeHeroSection({super.key, required this.scrollToServices});
 
   @override
   State<HomeHeroSection> createState() => _HomeHeroSectionState();
@@ -66,15 +68,15 @@ class _HomeHeroSectionState extends State<HomeHeroSection>
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          // Floating elements
-          _buildFloatingElements(),
+      child: ResponsivePadding(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Floating elements
+            _buildFloatingElements(),
 
-          // Main content
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+            // Main content
+            Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +106,7 @@ class _HomeHeroSectionState extends State<HomeHeroSection>
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
                           const Text(
                             'Empowering Manchester SMEs to achieve net-zero\ncarbon emissions through cutting-edge analytics\nand sustainable solutions for the office and service sector.',
                             style: TextStyle(
@@ -113,10 +115,10 @@ class _HomeHeroSectionState extends State<HomeHeroSection>
                               height: 1.5,
                             ),
                           ),
-                          const SizedBox(height: 40),
-                          _buildGradientButton('Discover Our Solutions', () {
+                          const SizedBox(height: 32),
+                          _buildGradientButton('Discover Our Services', () {
                             // Uncomment the next line to enable scrolling to a specific section
-                            // _scrollToSection(600);
+                            widget.scrollToServices.call();
                           }),
                         ],
                       ),
@@ -125,8 +127,8 @@ class _HomeHeroSectionState extends State<HomeHeroSection>
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

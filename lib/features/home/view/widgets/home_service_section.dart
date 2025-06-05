@@ -1,3 +1,4 @@
+import 'package:carbon_root_analytics/features/responsive/view/widgets/responsive_padding.dart';
 import 'package:flutter/material.dart';
 
 class HomeServiceSection extends StatelessWidget {
@@ -44,41 +45,58 @@ class HomeServiceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(40),
-      child: Column(
-        children: [
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [Color(0xFF10b981), Color(0xFF3b82f6)],
-            ).createShader(bounds),
-            child: const Text(
-              'Our Services',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF10b981).withOpacity(0.1),
+            const Color(0xFF3b82f6).withOpacity(0.1),
+          ],
+        ),
+      ),
+      child: ResponsivePadding(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 40),
+          child: Column(
+            children: [
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Color(0xFF10b981), Color(0xFF3b82f6)],
+                ).createShader(bounds),
+                child: const Text(
+                  'Our Services',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 24),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  mainAxisExtent: 200,
+                  maxCrossAxisExtent: 275,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  // Adjust the aspect ratio based on available width and height
+                  childAspectRatio: 1,
+                ),
+                itemCount: _cards.length,
+                itemBuilder: (context, index) {
+                  final card = _cards[index];
+                  return _buildServiceCard(
+                    card['icon'] as String,
+                    card['title'] as String,
+                    card['description'] as String,
+                  );
+                },
+              ),
+            ],
           ),
-          const SizedBox(height: 40),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 6,
-            itemBuilder: (context, index) => _buildServiceCard(
-              _cards[index]['icon'] as String,
-              _cards[index]['title'] as String,
-              _cards[index]['description'] as String,
-            ),
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 250,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.75,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -101,29 +119,37 @@ class HomeServiceSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF10b981), Color(0xFF3b82f6)],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF10b981), Color(0xFF3b82f6)],
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Center(
+                  child: Text(icon, style: const TextStyle(fontSize: 24)),
+                ),
               ),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Center(
-              child: Text(icon, style: const TextStyle(fontSize: 24)),
-            ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF10b981),
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF10b981),
-            ),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
           Expanded(
             child: Text(
               description,
