@@ -23,6 +23,27 @@ sealed class Result<T> {
 
   /// Creates an error [Result], completed with the specified [error].
   const factory Result.error(Exception error) = Error._;
+
+  /// Returns true if the result is an [Ok] instance.
+  bool get isOk => this is Ok<T>;
+
+  /// Returns true if the result is an [Error] instance.
+  bool get isError => this is Error<T>;
+
+  /// Applies the provided functions to the result, returning the value from the
+  /// function corresponding to the result type.
+  R fold<R>({
+    required R Function(T value) ok,
+    required R Function(Exception error) error,
+  }) {
+    if (this is Ok<T>) {
+      return ok((this as Ok<T>).value);
+    } else if (this is Error<T>) {
+      return error((this as Error<T>).error);
+    } else {
+      throw StateError('Unknown result type');
+    }
+  }
 }
 
 /// Subclass of Result for values

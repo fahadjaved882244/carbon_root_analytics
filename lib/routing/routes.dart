@@ -1,7 +1,9 @@
 abstract final class Routes {
   static const home = '/';
-  static const login = '/login';
-  static const register = '/register';
+  static const loginRelative = 'login';
+  static const login = '/$loginRelative';
+  static const registerRelative = 'register';
+  static const register = '/$registerRelative';
   static const notFoundRelative = 'not-found';
   static const notFound = '/$notFoundRelative';
 

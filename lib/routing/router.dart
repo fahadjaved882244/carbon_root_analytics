@@ -5,6 +5,7 @@
 // if the user is not authenticated, redirect to the login page
 // add a route for the not found page
 
+import 'package:carbon_root_analytics/features/auth/ui/login/view/login_view.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:carbon_root_analytics/utils/ui/not_found_view.dart';
 import 'package:go_router/go_router.dart';
@@ -39,16 +40,16 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const HomeView(),
       routes: [
         GoRoute(
-          path: Routes.notFound,
+          path: Routes.notFoundRelative,
           builder: (context, state) => const PageNotFoundView(),
+        ),
+        GoRoute(
+          path: Routes.login,
+          builder: (context, state) => const LoginView(),
         ),
       ],
     ),
 
-    // GoRoute(
-    //   path: '/login',
-    //   builder: (context, state) => const LoginView(),
-    // ),
     // GoRoute(
     //   path: '/register',
     //   builder: (context, state) => const RegisterView(),
