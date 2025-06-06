@@ -15,13 +15,13 @@ class NavigationConsole extends StatelessWidget {
       appBar: !context.showRail
           ? AppBar(
               backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-              title: Text(
-                'CRA Console',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               centerTitle: false,
+              // title: Text(
+              //   'CRA Console',
+              //   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
             )
           : null,
       drawer: CustomDrawer(
