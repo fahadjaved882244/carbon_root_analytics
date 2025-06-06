@@ -1,4 +1,4 @@
-import 'package:carbon_root_analytics/features/responsive/view/widgets/responsive_padding.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
 import 'package:flutter/material.dart';
 
 class HomeHeroSection extends StatefulWidget {

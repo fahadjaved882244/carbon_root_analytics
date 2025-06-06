@@ -5,8 +5,8 @@ import 'package:carbon_root_analytics/features/home/view/widgets/home_hero_secti
 import 'package:carbon_root_analytics/features/home/view/widgets/home_service_section.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
 
   static final Map<String, GlobalKey> _sectionKeys = {
     'services': GlobalKey(),

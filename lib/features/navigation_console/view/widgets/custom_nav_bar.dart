@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carbon_root_analytics/features/responsive/model/destination.dart';
+import 'package:carbon_root_analytics/features/navigation_console/model/destination.dart';
 
 class CustomNavBar extends StatelessWidget {
   final int selectedIndex;

@@ -1,9 +1,9 @@
 import 'package:carbon_root_analytics/utils/theme/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:carbon_root_analytics/features/responsive/model/destination.dart';
+import 'package:carbon_root_analytics/features/navigation_console/model/destination.dart';
 
-class CustomDrawer extends ConsumerWidget {
+class CustomDrawer extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
@@ -13,7 +13,7 @@ class CustomDrawer extends ConsumerWidget {
     required this.onDestinationSelected,
   });
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return NavigationDrawer(
       selectedIndex: selectedIndex,
       onDestinationSelected: (i) {
@@ -39,21 +39,24 @@ class CustomDrawer extends ConsumerWidget {
           child: Divider(),
         ),
         // toggle theme button
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 28),
-          leading: const Icon(Icons.wb_sunny_outlined),
-          title: const Text('Dark Mode'),
-          trailing: Switch(
-            value:
-                ref.watch(themeControllerProvider.notifier).themeMode ==
-                ThemeMode.dark,
-            onChanged: (value) {
-              // Handle theme toggle
-              ref.read(themeControllerProvider.notifier).toggleThemeMode();
-            },
-          ),
-          onTap: () {
-            ref.read(themeControllerProvider.notifier).toggleThemeMode();
+        Consumer(
+          builder: (context, ref, child) {
+            final mode = ref.watch(themeControllerProvider);
+            return ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 28),
+              leading: const Icon(Icons.wb_sunny_outlined),
+              title: const Text('Dark Mode'),
+              trailing: Switch(
+                value: mode == ThemeMode.dark,
+                onChanged: (value) {
+                  // Handle theme toggle
+                  ref.read(themeControllerProvider.notifier).toggleThemeMode();
+                },
+              ),
+              onTap: () {
+                ref.read(themeControllerProvider.notifier).toggleThemeMode();
+              },
+            );
           },
         ),
       ],
