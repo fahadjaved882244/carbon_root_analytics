@@ -1,36 +1,47 @@
+import 'package:carbon_root_analytics/config/dependencies.dart';
+import 'package:carbon_root_analytics/firebase_options.dart';
 import 'package:carbon_root_analytics/routing/router.dart';
+import 'package:carbon_root_analytics/utils/data/local_db.dart';
+import 'package:carbon_root_analytics/utils/theme/theme_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyA4xT7T6fmM4HnQEz3qbpJ3SbLBkqGTxog",
-      authDomain: "carbon-root-analysis.firebaseapp.com",
-      projectId: "carbon-root-analysis",
-      storageBucket: "carbon-root-analysis.firebasestorage.app",
-      messagingSenderId: "834307778618",
-      appId: "1:834307778618:web:6eca8c00808f3025ae2d03",
-      measurementId: "G-PCBPSQHH8W",
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final sharedPreferences = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const CRAApp(),
     ),
   );
-  runApp(const CRAApp());
 }
 
-class CRAApp extends StatelessWidget {
+class CRAApp extends ConsumerWidget {
   const CRAApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAuthenticated = ref.watch(authStateProvider);
+    final brightness = ref.watch(themeControllerProvider) == ThemeMode.dark
+        ? Brightness.dark
+        : Brightness.light;
+
     return MaterialApp.router(
       title: 'CRA - Carbon Root Analytics',
       theme: ThemeData(
         primarySwatch: Colors.green,
         fontFamily: 'Inter',
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        brightness: brightness,
       ),
-      routerConfig: router,
+
+      routerConfig: router(isAuthenticated.valueOrNull ?? false),
       debugShowCheckedModeBanner: false,
     );
   }

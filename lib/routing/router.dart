@@ -6,22 +6,15 @@
 // add a route for the not found page
 
 import 'package:carbon_root_analytics/features/auth/ui/login/view/login_view.dart';
+import 'package:carbon_root_analytics/features/dashboard/ui/view/dashboard_view.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/navigation_console_view.dart.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:carbon_root_analytics/utils/ui/not_found_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carbon_root_analytics/features/home/view/home_view.dart';
 
-// import 'package:carbon_root_analytics/features/auth/view/login_view.dart';
-// import 'package:carbon_root_analytics/features/auth/view/register_view.dart';
-// import 'package:carbon_root_analytics/features/console/view/console_view.dart';
-// import 'package:carbon_root_analytics/features/console/view/dashboard_view.dart';
-// import 'package:carbon_root_analytics/features/console/view/settings_view.dart';
-// import 'package:carbon_root_analytics/features/console/view/logs_view.dart';
-// import 'package:carbon_root_analytics/features/not_found/view/not_found_view.dart';
-// import 'package:carbon_root_analytics/features/auth/services/auth_service.dart';
-// import 'package:carbon_root_analytics/features/auth/services/auth_guard.dart';
-final GoRouter router = GoRouter(
-  initialLocation: Routes.home,
+GoRouter router(bool isAuthenticated) => GoRouter(
+  initialLocation: isAuthenticated ? Routes.consoleDashboard : Routes.home,
   // redirect: (context,state) {
   //   final isAuthenticated = AuthService.isAuthenticated();
   //   final isLoginPage = state.subloc == '/login';
@@ -43,9 +36,36 @@ final GoRouter router = GoRouter(
           path: Routes.notFoundRelative,
           builder: (context, state) => const PageNotFoundView(),
         ),
+
         GoRoute(
           path: Routes.login,
           builder: (context, state) => const LoginView(),
+        ),
+
+        ShellRoute(
+          builder: (context, state, child) {
+            return NavigationConsole(child);
+          },
+          redirect: (context, state) {
+            if (!isAuthenticated) {
+              return Routes.login;
+            }
+            return null;
+          },
+          routes: [
+            GoRoute(
+              path: Routes.consoleDashboard,
+              builder: (context, state) => const DashboardView(),
+            ),
+            GoRoute(
+              path: Routes.consoleSettings,
+              builder: (context, state) => const DashboardView(),
+            ),
+            GoRoute(
+              path: Routes.consoleLogs,
+              builder: (context, state) => const DashboardView(),
+            ),
+          ],
         ),
       ],
     ),

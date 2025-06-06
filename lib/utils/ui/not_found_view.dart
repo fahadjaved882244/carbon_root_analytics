@@ -1,5 +1,8 @@
+import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:go_router/go_router.dart';
 
 class PageNotFoundView extends StatefulWidget {
   const PageNotFoundView({super.key});
@@ -67,7 +70,7 @@ class _PageNotFoundViewState extends State<PageNotFoundView>
         );
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0.2,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeIn));
 
@@ -182,9 +185,9 @@ class _PageNotFoundViewState extends State<PageNotFoundView>
                                   _buildGlowButton(
                                     'Return to Earth',
                                     const Color(0xFF00f5ff),
-                                    () => Navigator.of(
-                                      context,
-                                    ).pushReplacementNamed('/'),
+                                    () {
+                                      context.go(Routes.home);
+                                    },
                                   ),
                                   const SizedBox(width: 20),
                                   _buildGlowButton(
@@ -393,6 +396,8 @@ class _PageNotFoundViewState extends State<PageNotFoundView>
     return Stack(
       children: List.generate(50, (index) {
         final random = math.Random(index);
+        final opacity =
+            0.2 + ((random.nextDouble() * 0.7) * _pulseAnimation.value);
         return AnimatedBuilder(
           animation: _pulseAnimation,
           builder: (context, child) {
@@ -404,9 +409,7 @@ class _PageNotFoundViewState extends State<PageNotFoundView>
                 height: 2 + (random.nextDouble() * 3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(
-                    0.3 + (random.nextDouble() * 0.7) * _pulseAnimation.value,
-                  ),
+                  color: Colors.white.withOpacity(opacity),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.white.withOpacity(0.5),
