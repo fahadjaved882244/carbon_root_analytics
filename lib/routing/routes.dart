@@ -7,12 +7,13 @@ abstract final class Routes {
   static const notFoundRelative = 'not-found';
   static const notFound = '/$notFoundRelative';
 
-  static const consoleRelative = 'console';
-  static const console = '/$consoleRelative';
-  static const consoleDashboardRelative = 'dashboard';
-  static const consoleDashboard = '$console/$consoleDashboardRelative';
-  static const consoleSettingsRelative = 'settings';
-  static const consoleSettings = '$console/$consoleSettingsRelative';
-  static const consoleLogsRelative = 'logs';
-  static const consoleLogs = '$console/$consoleLogsRelative';
+  // company routes
+  static const createCompanyRelative = 'create-company';
+  static const createCompany = '/$createCompanyRelative';
+
+  // Console routes
+  static const _console = '/console';
+  static const consoleDashboard = '$_console/dashboard';
+  static const consoleSettings = '$_console/settings';
+  static const consoleLogs = '$_console/logs';
 }

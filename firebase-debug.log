@@ -1,0 +1,100 @@
+[debug] [2025-06-10T04:19:40.427Z] ----------------------------------------------------------------------
+[debug] [2025-06-10T04:19:40.430Z] Command:       /usr/local/bin/firebase /Users/fahadjaved/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase init
+[debug] [2025-06-10T04:19:40.431Z] CLI Version:   14.6.0
+[debug] [2025-06-10T04:19:40.431Z] Platform:      darwin
+[debug] [2025-06-10T04:19:40.431Z] Node Version:  v20.18.2
+[debug] [2025-06-10T04:19:40.431Z] Time:          Tue Jun 10 2025 05:19:40 GMT+0100 (British Summer Time)
+[debug] [2025-06-10T04:19:40.431Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-06-10T04:19:40.433Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-06-10T04:19:40.611Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[debug] [2025-06-10T04:19:40.615Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-06-10T04:19:40.616Z] > authorizing via signed-in user (fahadjaved882244@gmail.com)
+[debug] [2025-06-10T04:19:40.617Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/fahadjaved/Desktop/work/carbon_root_analytics
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[debug] [2025-06-10T04:19:40.945Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-06-10T04:19:40.947Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2025-06-10T04:19:58.361Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/Users/fahadjaved/.cache/firebase/tools/lib/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:518:28)
+    at Interface.emit (node:domain:489:12)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1125:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:264:20)
+    at ReadStream.emit (node:events:530:35)
+    at ReadStream.emit (node:domain:489:12)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-06-10T04:21:00.986Z] ----------------------------------------------------------------------
+[debug] [2025-06-10T04:21:00.993Z] Command:       /usr/local/bin/firebase /Users/fahadjaved/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase init
+[debug] [2025-06-10T04:21:00.993Z] CLI Version:   14.6.0
+[debug] [2025-06-10T04:21:00.993Z] Platform:      darwin
+[debug] [2025-06-10T04:21:00.993Z] Node Version:  v20.18.2
+[debug] [2025-06-10T04:21:00.994Z] Time:          Tue Jun 10 2025 05:21:00 GMT+0100 (British Summer Time)
+[debug] [2025-06-10T04:21:00.994Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-06-10T04:21:01.136Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[debug] [2025-06-10T04:21:01.139Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-06-10T04:21:01.140Z] > authorizing via signed-in user (fahadjaved882244@gmail.com)
+[debug] [2025-06-10T04:21:01.141Z] Object "" in "firebase.json" has unknown property: {"additionalProperty":"flutter"}
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/fahadjaved/Desktop/work/carbon_root_analytics
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-06-10T04:21:41.492Z] Checked if tokens are valid: false, expires at: 1749173740055
+[debug] [2025-06-10T04:21:41.494Z] Checked if tokens are valid: false, expires at: 1749173740055
+[debug] [2025-06-10T04:21:41.494Z] > refreshing access token with scopes: []
+[debug] [2025-06-10T04:21:41.498Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-06-10T04:21:41.499Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-06-10T04:21:41.713Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-06-10T04:21:41.713Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-06-10T04:21:41.725Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=100
+[debug] [2025-06-10T04:21:42.151Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2025-06-10T04:21:42.152Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] i  Using project carbon-root-analysis (carbon-root-analysis) 
+[info] 
+=== Hosting Setup
+[debug] [2025-06-10T04:21:44.219Z] Checked if tokens are valid: true, expires at: 1749532900714
+[debug] [2025-06-10T04:21:44.219Z] Checked if tokens are valid: true, expires at: 1749532900714
+[debug] [2025-06-10T04:21:44.220Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carbon-root-analysis [none]
+[debug] [2025-06-10T04:21:44.432Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carbon-root-analysis 200
+[debug] [2025-06-10T04:21:44.433Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carbon-root-analysis {"projectId":"carbon-root-analysis","projectNumber":"834307778618","displayName":"carbon-root-analysis","name":"projects/carbon-root-analysis","resources":{"hostingSite":"carbon-root-analysis"},"state":"ACTIVE","etag":"1_a2501402-0502-48c8-acbf-95b093795920"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 

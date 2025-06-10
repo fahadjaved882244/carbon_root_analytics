@@ -3,30 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 @immutable
-class LoginState {
+class RegisterState {
   final bool isLoading;
   final String? errorMessage;
 
-  const LoginState({this.isLoading = false, this.errorMessage});
+  const RegisterState({this.isLoading = false, this.errorMessage});
 
-  const LoginState.initial() : isLoading = false, errorMessage = null;
+  const RegisterState.initial() : isLoading = false, errorMessage = null;
 
-  LoginState copyWith({bool? isLoading, String? errorMessage}) {
-    return LoginState(
+  RegisterState copyWith({bool? isLoading, String? errorMessage}) {
+    return RegisterState(
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
     );
   }
 }
 
-class LoginViewModel extends StateNotifier<LoginState> {
+class RegisterViewModel extends StateNotifier<RegisterState> {
   final IAuthRepository authRepository;
-  LoginViewModel({required this.authRepository}) : super(LoginState.initial());
+  RegisterViewModel({required this.authRepository})
+    : super(RegisterState.initial());
 
-  Future<void> login(String email, String password) async {
+  Future<void> register(String email, String password) async {
     state = state.copyWith(isLoading: true);
 
-    final result = await authRepository.login(email: email, password: password);
+    final result = await authRepository.register(
+      email: email,
+      password: password,
+    );
     result.fold(
       ok: (_) {
         state = state.copyWith(isLoading: false, errorMessage: null);

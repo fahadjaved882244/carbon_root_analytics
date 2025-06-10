@@ -1,6 +1,6 @@
 // Login Screen
 import 'package:carbon_root_analytics/config/dependencies.dart';
-import 'package:carbon_root_analytics/features/auth/ui/login/view_model/login_view_model.dart';
+import 'package:carbon_root_analytics/features/auth/ui/register/view_model/register_view_model.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:flutter/material.dart';
@@ -8,22 +8,23 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class LoginView extends HookConsumerWidget {
-  const LoginView({super.key});
+class RegisterView extends HookConsumerWidget {
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final validationMode = useState(AutovalidateMode.disabled);
-    final emailController = useTextEditingController(
-      text: "testuser@gmail.com",
-    );
-    final passwordController = useTextEditingController(text: "12345678");
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+
+    // Access the login provider to get the current state
+    final registerState = ref.watch(registerViewModelProvider);
 
     // Listen to the login state changes and show a snackbar on error
     // navigate to console if success
-    ref.listen<LoginState>(loginViewModelProvider, (previous, next) {
-      if (previous != next && next.errorMessage != null) {
+    ref.listen<RegisterState>(registerViewModelProvider, (previous, next) {
+      if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.errorMessage!),
@@ -44,7 +45,7 @@ class LoginView extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Welcome Back!',
+                  'Register a new User!',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
@@ -86,41 +87,35 @@ class LoginView extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
 
-                Consumer(
-                  builder: (context, ref, child) {
-                    final loginState = ref.watch(loginViewModelProvider);
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: FilledButton(
-                        onPressed: loginState.isLoading
-                            ? null
-                            : () {
-                                if (formKey.currentState!.validate()) {
-                                  ref
-                                      .read(loginViewModelProvider.notifier)
-                                      .login(
-                                        emailController.text.trim(),
-                                        passwordController.text,
-                                      );
-                                } else {
-                                  validationMode.value =
-                                      AutovalidateMode.always;
-                                }
-                              },
-                        child: loginState.isLoading
-                            ? const CircularProgressIndicator()
-                            : const Text('Login'),
-                      ),
-                    );
-                  },
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: FilledButton(
+                    onPressed: registerState.isLoading
+                        ? null
+                        : () {
+                            if (formKey.currentState!.validate()) {
+                              ref
+                                  .read(registerViewModelProvider.notifier)
+                                  .register(
+                                    emailController.text.trim(),
+                                    passwordController.text,
+                                  );
+                            } else {
+                              validationMode.value = AutovalidateMode.always;
+                            }
+                          },
+                    child: registerState.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Register'),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    context.go(Routes.register);
+                    context.go(Routes.login);
                   },
-                  child: const Text("Don't have an account? Sign up"),
+                  child: const Text("Already have an account? Login here!"),
                 ),
               ],
             ),
