@@ -9,8 +9,9 @@ import 'package:carbon_root_analytics/config/dependencies.dart';
 import 'package:carbon_root_analytics/features/auth/ui/login/view/login_view.dart';
 import 'package:carbon_root_analytics/features/auth/ui/register/view/register_view.dart';
 import 'package:carbon_root_analytics/features/company/ui/create_company/view/create_company_view.dart';
-import 'package:carbon_root_analytics/features/dashboard/ui/view/dashboard_view.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/pages/dashboard/dashboard_view.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/navigation_console_view.dart.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/pages/logs/logs_view.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:carbon_root_analytics/utils/ui/not_found_view.dart';
 import 'package:flutter/widgets.dart';
@@ -79,40 +80,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const DashboardView(),
               ),
               GoRoute(
-                path: Routes.consoleSettings,
-                builder: (context, state) => const DashboardView(),
+                path: Routes.consoleLogs,
+                builder: (context, state) => const CompanyDetailsView(),
               ),
               GoRoute(
-                path: Routes.consoleLogs,
+                path: Routes.consoleSettings,
                 builder: (context, state) => const DashboardView(),
               ),
             ],
           ),
         ],
       ),
-
-      // GoRoute(
-      //   path: '/register',
-      //   builder: (context, state) => const RegisterView(),
-      // ),
-      // GoRoute(
-      //   path: '/console',
-      //   builder: (context, state) => const ConsoleView(),
-      //   routes: [
-      //     GoRoute(
-      //       path: 'dashboard',
-      //       builder: (context, state) => const DashboardView(),
-      //     ),
-      //     GoRoute(
-      //       path: 'settings',
-      //       builder: (context, state) => const SettingsView(),
-      //     ),
-      //     GoRoute(
-      //       path: 'logs',
-      //       builder: (context, state) => const LogsView(),
-      //     ),
-      //   ],
-      // ),
     ],
   );
 });

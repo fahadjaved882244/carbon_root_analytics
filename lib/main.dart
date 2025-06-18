@@ -1,6 +1,7 @@
 import 'package:carbon_root_analytics/firebase_options.dart';
 import 'package:carbon_root_analytics/routing/router.dart';
 import 'package:carbon_root_analytics/utils/data/local_db.dart';
+import 'package:carbon_root_analytics/utils/theme/app_colors.dart';
 import 'package:carbon_root_analytics/utils/theme/theme_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -41,12 +42,14 @@ class CRAApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'CRA - Carbon Root Analytics',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        // from seed
+        colorSchemeSeed: AppColors.primary,
+
         fontFamily: 'Inter',
         visualDensity: VisualDensity.adaptivePlatformDensity,
         brightness: brightness,
+        useMaterial3: true,
       ),
-
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

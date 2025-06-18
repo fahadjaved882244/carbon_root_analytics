@@ -27,15 +27,15 @@ RPCError: getIsolate: (-32603) Unexpected DWDS error for getIsolate: Bad state: 
 ## flutter doctor
 
 ```
-[✓] Flutter (Channel stable, 3.32.0, on macOS 15.5 24F74 darwin-arm64, locale en-US) [389ms]
+[✓] Flutter (Channel stable, 3.32.0, on macOS 15.5 24F74 darwin-arm64, locale en-US) [704ms]
     • Flutter version 3.32.0 on channel stable at /Users/fahadjaved/development/flutter
     • Upstream repository https://github.com/flutter/flutter.git
-    • Framework revision be698c48a6 (3 weeks ago), 2025-05-19 12:59:14 -0700
+    • Framework revision be698c48a6 (4 weeks ago), 2025-05-19 12:59:14 -0700
     • Engine revision 1881800949
     • Dart version 3.8.0
     • DevTools version 2.45.1
 
-[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1) [1,851ms]
+[✓] Android toolchain - develop for Android devices (Android SDK version 35.0.1) [3.7s]
     • Android SDK at /Users/fahadjaved/Library/Android/sdk
     • Platform android-35, build-tools 35.0.1
     • Java binary at: /Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java
@@ -44,15 +44,15 @@ RPCError: getIsolate: (-32603) Unexpected DWDS error for getIsolate: Bad state: 
     • Java version OpenJDK Runtime Environment (build 21.0.6+-13368085-b895.109)
     • All Android licenses accepted.
 
-[✓] Xcode - develop for iOS and macOS (Xcode 16.3) [868ms]
+[✓] Xcode - develop for iOS and macOS (Xcode 16.3) [1,479ms]
     • Xcode at /Applications/Xcode.app/Contents/Developer
     • Build 16E140
     • CocoaPods version 1.16.2
 
-[✓] Chrome - develop for the web [5ms]
+[✓] Chrome - develop for the web [12ms]
     • Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
 
-[✓] Android Studio (version 2024.3) [4ms]
+[✓] Android Studio (version 2024.3) [10ms]
     • Android Studio at /Applications/Android Studio.app/Contents
     • Flutter plugin can be installed from:
       🔨 https://plugins.jetbrains.com/plugin/9212-flutter
@@ -60,15 +60,15 @@ RPCError: getIsolate: (-32603) Unexpected DWDS error for getIsolate: Bad state: 
       🔨 https://plugins.jetbrains.com/plugin/6351-dart
     • Java version OpenJDK Runtime Environment (build 21.0.6+-13368085-b895.109)
 
-[✓] VS Code (version 1.99.3) [3ms]
+[✓] VS Code (version 1.99.3) [7ms]
     • VS Code at /Users/fahadjaved/Downloads/Visual Studio Code.app/Contents
     • Flutter extension version 3.112.0
 
-[✓] Connected device (2 available) [5.9s]
+[✓] Connected device (2 available) [6.5s]
     • macOS (desktop) • macos  • darwin-arm64   • macOS 15.5 24F74 darwin-arm64
-    • Chrome (web)    • chrome • web-javascript • Google Chrome 137.0.7151.69
+    • Chrome (web)    • chrome • web-javascript • Google Chrome 137.0.7151.104
 
-[✓] Network resources [308ms]
+[✓] Network resources [1,226ms]
     • All expected network resources are available.
 
 • No issues found!

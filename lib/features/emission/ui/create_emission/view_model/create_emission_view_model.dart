@@ -36,7 +36,7 @@ class CreateEmissionViewModel extends StateNotifier<AsyncValue<Emission?>> {
 
     final emission = Emission(
       companyId: companyId,
-      month: DateTime(year, month),
+      monthYear: DateTime(year, month),
       vehicleFuelLitres: vehicleFuelLitres,
       gasHeatingKWh: gasHeatingKWh,
       electricityKWh: electricityKWh,

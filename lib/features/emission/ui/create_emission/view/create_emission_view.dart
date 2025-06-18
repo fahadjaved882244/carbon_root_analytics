@@ -85,8 +85,6 @@ class CreateEmissionView extends HookConsumerWidget {
           },
         ),
         title: const Text('Create Emission Record'),
-        backgroundColor: Colors.green.shade700,
-        foregroundColor: Colors.white,
       ),
       body: Form(
         key: formKey,
@@ -243,7 +241,7 @@ class CreateEmissionView extends HookConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 height: 56,
-                child: ElevatedButton.icon(
+                child: FilledButton.icon(
                   onPressed: emissionState.isLoading
                       ? null
                       : () => _submitForm(
@@ -271,14 +269,8 @@ class CreateEmissionView extends HookConsumerWidget {
                         )
                       : const Icon(Icons.save),
                   label: Text(
-                    emissionState.isLoading
-                        ? 'Creating...'
-                        : 'Create Emission Record',
+                    emissionState.isLoading ? 'Creating...' : 'Submit',
                     style: const TextStyle(fontSize: 16),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade700,
-                    foregroundColor: Colors.white,
                   ),
                 ),
               ),
