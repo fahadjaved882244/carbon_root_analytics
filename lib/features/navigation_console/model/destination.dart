@@ -9,5 +9,6 @@ class Destination {
 const List<Destination> myDestinations = <Destination>[
   Destination(Icons.dashboard_outlined, 'Dashboard'),
   Destination(Icons.timeline_outlined, 'Logs'),
-  Destination(Icons.settings_outlined, 'Settings'),
+  Destination(Icons.campaign_outlined, 'Offset'),
+  Destination(Icons.diamond_outlined, 'Premium'),
 ];

@@ -14,6 +14,7 @@ abstract final class Routes {
   // Console routes
   static const _console = '/console';
   static const consoleDashboard = '$_console/dashboard';
-  static const consoleSettings = '$_console/settings';
+  static const consoleOffset = '$_console/offset';
+  static const consolePremium = '$_console/premium';
   static const consoleLogs = '$_console/logs';
 }
