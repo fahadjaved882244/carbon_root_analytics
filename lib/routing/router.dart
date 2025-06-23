@@ -5,92 +5,92 @@
 // if the user is not authenticated, redirect to the login page
 // add a route for the not found page
 
+import 'package:carbon_root_analytics/config/dependencies.dart';
 import 'package:carbon_root_analytics/features/auth/ui/login/view/login_view.dart';
-import 'package:carbon_root_analytics/features/dashboard/ui/view/dashboard_view.dart';
+import 'package:carbon_root_analytics/features/auth/ui/register/view/register_view.dart';
+import 'package:carbon_root_analytics/features/company/ui/create_company/view/create_company_view.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/pages/dashboard/dashboard_view.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/navigation_console_view.dart.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/pages/logs/logs_view.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:carbon_root_analytics/utils/ui/not_found_view.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carbon_root_analytics/features/home/view/home_view.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-GoRouter router(bool isAuthenticated) => GoRouter(
-  initialLocation: isAuthenticated ? Routes.consoleDashboard : Routes.home,
-  // redirect: (context,state) {
-  //   final isAuthenticated = AuthService.isAuthenticated();
-  //   final isLoginPage = state.subloc == '/login';
-  //   final isRegisterPage = state.subloc == '/register';
+// This is super important - otherwise, we would throw away the whole widget tree when the provider is updated.
+final navigatorKey = GlobalKey<NavigatorState>();
+final shellKey = GlobalKey<NavigatorState>();
 
-  //   if (!isAuthenticated && !isLoginPage && !isRegisterPage) {
-  //     return '/login';
-  //   }
-  //   return null;
-  // },
-  errorBuilder: (context, state) => const PageNotFoundView(),
+final routerProvider = Provider<GoRouter>((ref) {
+  final isAuthenticated = ref.watch(authStateProvider).valueOrNull != null;
 
-  routes: [
-    GoRoute(
-      path: Routes.home,
-      builder: (context, state) => const HomeView(),
-      routes: [
-        GoRoute(
-          path: Routes.notFoundRelative,
-          builder: (context, state) => const PageNotFoundView(),
-        ),
+  return GoRouter(
+    navigatorKey: navigatorKey,
+    initialLocation: isAuthenticated ? Routes.consoleDashboard : Routes.home,
+    redirect: (context, state) {
+      final isLoginPage = state.fullPath?.contains(Routes.login) ?? false;
+      final isRegisterPage = state.fullPath?.contains(Routes.register) ?? false;
+      final isHomePage = state.fullPath == Routes.home;
 
-        GoRoute(
-          path: Routes.login,
-          builder: (context, state) => const LoginView(),
-        ),
+      if (isAuthenticated && (isLoginPage || isRegisterPage)) {
+        return Routes.consoleDashboard;
+      }
+      if (!isAuthenticated && !isLoginPage && !isRegisterPage && !isHomePage) {
+        return Routes.login;
+      }
 
-        ShellRoute(
-          builder: (context, state, child) {
-            return NavigationConsole(child);
-          },
-          redirect: (context, state) {
-            if (!isAuthenticated) {
-              return Routes.login;
-            }
-            return null;
-          },
-          routes: [
-            GoRoute(
-              path: Routes.consoleDashboard,
-              builder: (context, state) => const DashboardView(),
-            ),
-            GoRoute(
-              path: Routes.consoleSettings,
-              builder: (context, state) => const DashboardView(),
-            ),
-            GoRoute(
-              path: Routes.consoleLogs,
-              builder: (context, state) => const DashboardView(),
-            ),
-          ],
-        ),
-      ],
-    ),
+      return null;
+    },
+    errorBuilder: (context, state) => const PageNotFoundView(),
 
-    // GoRoute(
-    //   path: '/register',
-    //   builder: (context, state) => const RegisterView(),
-    // ),
-    // GoRoute(
-    //   path: '/console',
-    //   builder: (context, state) => const ConsoleView(),
-    //   routes: [
-    //     GoRoute(
-    //       path: 'dashboard',
-    //       builder: (context, state) => const DashboardView(),
-    //     ),
-    //     GoRoute(
-    //       path: 'settings',
-    //       builder: (context, state) => const SettingsView(),
-    //     ),
-    //     GoRoute(
-    //       path: 'logs',
-    //       builder: (context, state) => const LogsView(),
-    //     ),
-    //   ],
-    // ),
-  ],
-);
+    routes: [
+      GoRoute(
+        path: Routes.home,
+        builder: (context, state) => const HomeView(),
+        routes: [
+          GoRoute(
+            path: Routes.notFoundRelative,
+            builder: (context, state) => const PageNotFoundView(),
+          ),
+          GoRoute(
+            path: Routes.loginRelative,
+            builder: (context, state) => const LoginView(),
+          ),
+          GoRoute(
+            path: Routes.registerRelative,
+            builder: (context, state) => const RegisterView(),
+          ),
+
+          GoRoute(
+            path: Routes.createCompanyRelative,
+            builder: (context, state) => const CreateCompanyView(),
+          ),
+
+          ShellRoute(
+            parentNavigatorKey: navigatorKey,
+            navigatorKey: shellKey,
+            builder: (context, state, child) {
+              return NavigationConsole(child);
+            },
+            routes: [
+              GoRoute(
+                path: Routes.consoleDashboard,
+                builder: (context, state) => const DashboardView(),
+              ),
+              GoRoute(
+                path: Routes.consoleLogs,
+                builder: (context, state) => const CompanyDetailsView(),
+              ),
+              GoRoute(
+                path: Routes.consoleSettings,
+                builder: (context, state) => const DashboardView(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+});

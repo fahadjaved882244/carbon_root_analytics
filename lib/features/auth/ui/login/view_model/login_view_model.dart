@@ -1,4 +1,4 @@
-import 'package:carbon_root_analytics/features/auth/repository/i_auth_repository.dart';
+import 'package:carbon_root_analytics/features/auth/data/repository/i_auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -14,7 +14,7 @@ class LoginState {
   LoginState copyWith({bool? isLoading, String? errorMessage}) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage,
     );
   }
 }

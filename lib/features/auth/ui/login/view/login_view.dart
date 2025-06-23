@@ -2,8 +2,10 @@
 import 'package:carbon_root_analytics/config/dependencies.dart';
 import 'package:carbon_root_analytics/features/auth/ui/login/view_model/login_view_model.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
+import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class LoginView extends HookConsumerWidget {
@@ -18,13 +20,10 @@ class LoginView extends HookConsumerWidget {
     );
     final passwordController = useTextEditingController(text: "12345678");
 
-    // Access the login provider to get the current state
-    final loginState = ref.watch(loginViewModelProvider);
-
     // Listen to the login state changes and show a snackbar on error
     // navigate to console if success
     ref.listen<LoginState>(loginViewModelProvider, (previous, next) {
-      if (next.errorMessage != null) {
+      if (previous != next && next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.errorMessage!),
@@ -87,38 +86,39 @@ class LoginView extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: FilledButton(
-                    onPressed: loginState.isLoading
-                        ? null
-                        : () {
-                            if (formKey.currentState!.validate()) {
-                              ref
-                                  .read(loginViewModelProvider.notifier)
-                                  .login(
-                                    emailController.text.trim(),
-                                    passwordController.text,
-                                  );
-                            } else {
-                              validationMode.value = AutovalidateMode.always;
-                            }
-                          },
-                    child: loginState.isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Login'),
-                  ),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final loginState = ref.watch(loginViewModelProvider);
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: FilledButton(
+                        onPressed: loginState.isLoading
+                            ? null
+                            : () {
+                                if (formKey.currentState!.validate()) {
+                                  ref
+                                      .read(loginViewModelProvider.notifier)
+                                      .login(
+                                        emailController.text.trim(),
+                                        passwordController.text,
+                                      );
+                                } else {
+                                  validationMode.value =
+                                      AutovalidateMode.always;
+                                }
+                              },
+                        child: loginState.isLoading
+                            ? const CircularProgressIndicator()
+                            : const Text('Login'),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const RegisterScreen(),
-                    //   ),
-                    // );
+                    context.go(Routes.register);
                   },
                   child: const Text("Don't have an account? Sign up"),
                 ),

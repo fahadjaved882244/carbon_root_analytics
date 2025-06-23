@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:carbon_root_analytics/features/auth/repository/i_auth_repository.dart';
+import 'package:carbon_root_analytics/features/auth/data/repository/i_auth_repository.dart';
 import 'package:carbon_root_analytics/utils/core/result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -24,9 +24,34 @@ class AuthRepositoryRemote extends IAuthRepository {
   }
 
   @override
+  Future<Result<void>> register({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return Future.value(Result.ok(null));
+    } on FirebaseAuthException catch (e) {
+      final error = _handleAuthException(e);
+      return Future.value(Result.error(Exception(error)));
+    } catch (e) {
+      return Future.value(
+        Result.error(Exception('An unexpected error occurred')),
+      );
+    }
+  }
+
+  @override
   Future<Result<void>> logout() async {
-    await _auth.signOut();
-    return Result.ok(null);
+    try {
+      await _auth.signOut();
+      return Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception('An error occurred while logging out'));
+    }
   }
 
   String _handleAuthException(FirebaseAuthException e) {

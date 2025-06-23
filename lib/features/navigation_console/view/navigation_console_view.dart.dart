@@ -1,7 +1,9 @@
 import 'package:carbon_root_analytics/features/navigation_console/utils/media_query_extension.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/custom_drawer.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/custom_nav_rail.dart';
+import 'package:carbon_root_analytics/features/navigation_console/view/widgets/search_app_bar.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
+import 'package:carbon_root_analytics/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,6 +14,7 @@ class NavigationConsole extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: !context.showRail
           ? AppBar(
               backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
@@ -23,7 +26,7 @@ class NavigationConsole extends StatelessWidget {
               //   ),
               // ),
             )
-          : null,
+          : SearchAppBar(),
       drawer: CustomDrawer(
         selectedIndex: _calculateSelectedIndex(context),
         onDestinationSelected: (i) {
@@ -40,7 +43,14 @@ class NavigationConsole extends StatelessWidget {
                   _onItemTapped(context, i);
                 },
               ),
-            Expanded(child: child),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: context.showRail
+                    ? const BorderRadius.horizontal(left: Radius.circular(24))
+                    : BorderRadius.zero,
+                child: child,
+              ),
+            ),
           ],
         ),
       ),
@@ -51,9 +61,9 @@ class NavigationConsole extends StatelessWidget {
     final String location = GoRouterState.of(context).uri.toString();
     if (location.startsWith(Routes.consoleDashboard)) {
       return 0;
-    } else if (location.startsWith(Routes.consoleSettings)) {
-      return 1;
     } else if (location.startsWith(Routes.consoleLogs)) {
+      return 1;
+    } else if (location.startsWith(Routes.consoleSettings)) {
       return 2;
     }
     return 0;
@@ -65,10 +75,10 @@ class NavigationConsole extends StatelessWidget {
         context.go(Routes.consoleDashboard);
         break;
       case 1:
-        context.go(Routes.consoleSettings);
+        context.go(Routes.consoleLogs);
         break;
       case 2:
-        context.go(Routes.consoleLogs);
+        context.go(Routes.consoleSettings);
         break;
     }
   }
