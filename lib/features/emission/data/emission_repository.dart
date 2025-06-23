@@ -7,24 +7,27 @@ class EmissionRepository implements IEmissionRepository {
   final firestore = FirebaseFirestore.instance;
 
   @override
-  Future<Result<List<Emission>>> fetchEmissionData(
+  Stream<Result<List<Emission>>> fetchEmissionData(
     String userId,
     String companyId,
-  ) async {
+  ) async* {
     try {
-      final snapshot = await firestore
+      final snapshot = firestore
           .collection('users')
           .doc(userId)
           .collection('companies')
           .doc(companyId)
           .collection('emissions')
-          .get();
-      final emissions = snapshot.docs
-          .map((doc) => Emission.fromMap(doc.data()))
-          .toList();
-      return Result.ok(emissions);
+          .snapshots();
+      await for (final querySnapshot in snapshot) {
+        final emissions = querySnapshot.docs
+            .map((doc) => Emission.fromMap(doc.data()))
+            .toList();
+
+        yield Result.ok(emissions);
+      }
     } catch (e) {
-      return Result.error(Exception('Failed to fetch emission data: $e'));
+      yield Result.error(Exception('Failed to fetch emission data: $e'));
     }
   }
 

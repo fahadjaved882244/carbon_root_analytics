@@ -1,5 +1,4 @@
 import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
-import 'package:carbon_root_analytics/features/emission/ui/read_emission/view/read_emission_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -7,17 +6,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class YearlyChart extends HookConsumerWidget {
   final String title;
+  final List<Emission> allData;
   final Widget Function(BuildContext context, List<Emission> data) chartBuilder;
   const YearlyChart({
     super.key,
     required this.title,
+    required this.allData,
     required this.chartBuilder,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final allData = ref.watch(dashboardDataProvider);
-
     // calculate which years data is there
     final years = allData.map((e) => e.monthYear.year).toSet().toList()
       ..sort((a, b) => b.compareTo(a)); // Sort descending

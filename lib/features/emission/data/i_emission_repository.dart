@@ -5,7 +5,7 @@ abstract class IEmissionRepository {
   /// Fetches the emission data for a given [countryCode].
   ///
   /// Returns a [Future] that resolves to a list of emission data.
-  Future<Result<List<Emission>>> fetchEmissionData(
+  Stream<Result<List<Emission>>> fetchEmissionData(
     String userId,
     String companyId,
   );

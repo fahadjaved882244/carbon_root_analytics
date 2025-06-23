@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 @immutable
@@ -43,7 +44,9 @@ class Emission {
   factory Emission.fromMap(Map<String, dynamic> json) {
     return Emission(
       companyId: json['companyId'],
-      monthYear: json['month'],
+      // parse datetime from timestamp firestore
+      monthYear: json['month'].toDate(),
+
       vehicleFuelLitres: json['vehicleFuelLitres'],
       gasHeatingKWh: json['gasHeatingKWh'],
       electricityKWh: json['electricityKWh'],

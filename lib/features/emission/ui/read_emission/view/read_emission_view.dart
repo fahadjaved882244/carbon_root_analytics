@@ -1,283 +1,14 @@
 import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
 import 'package:carbon_root_analytics/features/emission/ui/read_emission/view/widgets/yearly_chart.dart';
+import 'package:carbon_root_analytics/features/emission/ui/read_emission/view_model/read_emission_view_model.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
 import 'package:carbon_root_analytics/utils/core/data_time_x.dart';
+import 'package:carbon_root_analytics/utils/core/media_query_x.dart';
 import 'package:carbon_root_analytics/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
-
-// Data Models
-
-class ScopeBreakdown {
-  final String category;
-  final double value;
-  final Color color;
-
-  ScopeBreakdown({
-    required this.category,
-    required this.value,
-    required this.color,
-  });
-}
-
-// Mock Data Provider
-final dashboardDataProvider = Provider<List<Emission>>((ref) {
-  return [
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-01-01'),
-      vehicleFuelLitres: 221.74,
-      gasHeatingKWh: 1888.89,
-      electricityKWh: 1050.00,
-      employeeCommuteKm: 7000.00,
-      paperUsageReams: 51,
-      cloudUsageHours: 360.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-02-01'),
-      vehicleFuelLitres: 203.48,
-      gasHeatingKWh: 1733.33,
-      electricityKWh: 950.00,
-      employeeCommuteKm: 6708.33,
-      paperUsageReams: 49,
-      cloudUsageHours: 345.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-03-01'),
-      vehicleFuelLitres: 239.13,
-      gasHeatingKWh: 2044.44,
-      electricityKWh: 1125.00,
-      employeeCommuteKm: 7583.33,
-      paperUsageReams: 56,
-      cloudUsageHours: 390.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-04-01'),
-      vehicleFuelLitres: 185.22,
-      gasHeatingKWh: 1577.78,
-      electricityKWh: 850.00,
-      employeeCommuteKm: 6416.67,
-      paperUsageReams: 47,
-      cloudUsageHours: 330.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-05-01'),
-      vehicleFuelLitres: 177.39,
-      gasHeatingKWh: 1511.11,
-      electricityKWh: 800.00,
-      employeeCommuteKm: 6125.00,
-      paperUsageReams: 45,
-      cloudUsageHours: 315.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-06-01'),
-      vehicleFuelLitres: 169.57,
-      gasHeatingKWh: 1444.44,
-      electricityKWh: 775.00,
-      employeeCommuteKm: 5716.67,
-      paperUsageReams: 42,
-      cloudUsageHours: 294.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-07-01'),
-      vehicleFuelLitres: 161.74,
-      gasHeatingKWh: 1377.78,
-      electricityKWh: 725.00,
-      employeeCommuteKm: 5366.67,
-      paperUsageReams: 39,
-      cloudUsageHours: 276.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-08-01'),
-      vehicleFuelLitres: 153.91,
-      gasHeatingKWh: 1311.11,
-      electricityKWh: 675.00,
-      employeeCommuteKm: 5191.67,
-      paperUsageReams: 38,
-      cloudUsageHours: 267.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-09-01'),
-      vehicleFuelLitres: 146.09,
-      gasHeatingKWh: 1244.44,
-      electricityKWh: 625.00,
-      employeeCommuteKm: 4958.33,
-      paperUsageReams: 36,
-      cloudUsageHours: 255.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-10-01'),
-      vehicleFuelLitres: 138.26,
-      gasHeatingKWh: 1177.78,
-      electricityKWh: 575.00,
-      employeeCommuteKm: 4783.33,
-      paperUsageReams: 35,
-      cloudUsageHours: 246.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-11-01'),
-      vehicleFuelLitres: 130.43,
-      gasHeatingKWh: 1111.11,
-      electricityKWh: 525.00,
-      employeeCommuteKm: 4550.00,
-      paperUsageReams: 33,
-      cloudUsageHours: 234.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2024-12-01'),
-      vehicleFuelLitres: 122.61,
-      gasHeatingKWh: 1044.44,
-      electricityKWh: 475.00,
-      employeeCommuteKm: 4375.00,
-      paperUsageReams: 32,
-      cloudUsageHours: 225.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-01-01'),
-      vehicleFuelLitres: 150.32,
-      gasHeatingKWh: 1200.33,
-      electricityKWh: 1260.00,
-      employeeCommuteKm: 5000.00,
-      paperUsageReams: 61,
-      cloudUsageHours: 432.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-02-01'),
-      vehicleFuelLitres: 244.18,
-      gasHeatingKWh: 1000.00,
-      electricityKWh: 1140.00,
-      employeeCommuteKm: 5000.00,
-      paperUsageReams: 59,
-      cloudUsageHours: 414.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-03-01'),
-      vehicleFuelLitres: 286.96,
-      gasHeatingKWh: 1100.33,
-      electricityKWh: 1350.00,
-      employeeCommuteKm: 5300.00,
-      paperUsageReams: 67,
-      cloudUsageHours: 468.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-04-01'),
-      vehicleFuelLitres: 222.26,
-      gasHeatingKWh: 1893.33,
-      electricityKWh: 1020.00,
-      employeeCommuteKm: 5200.00,
-      paperUsageReams: 56,
-      cloudUsageHours: 396.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-05-01'),
-      vehicleFuelLitres: 212.87,
-      gasHeatingKWh: 1813.33,
-      electricityKWh: 960.00,
-      employeeCommuteKm: 5350.00,
-      paperUsageReams: 54,
-      cloudUsageHours: 378.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-06-01'),
-      vehicleFuelLitres: 203.48,
-      gasHeatingKWh: 1733.33,
-      electricityKWh: 930.00,
-      employeeCommuteKm: 6860.00,
-      paperUsageReams: 50,
-      cloudUsageHours: 352.80,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-07-01'),
-      vehicleFuelLitres: 194.09,
-      gasHeatingKWh: 1653.33,
-      electricityKWh: 870.00,
-      employeeCommuteKm: 6440.00,
-      paperUsageReams: 47,
-      cloudUsageHours: 331.20,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-08-01'),
-      vehicleFuelLitres: 250.69,
-      gasHeatingKWh: 1873.33,
-      electricityKWh: 1100.00,
-      employeeCommuteKm: 6230.00,
-      paperUsageReams: 46,
-      cloudUsageHours: 320.40,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-09-01'),
-      vehicleFuelLitres: 260.31,
-      gasHeatingKWh: 2200.33,
-      electricityKWh: 1300.00,
-      employeeCommuteKm: 5950.00,
-      paperUsageReams: 43,
-      cloudUsageHours: 306.00,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-10-01'),
-      vehicleFuelLitres: 300.91,
-      gasHeatingKWh: 2450.33,
-      electricityKWh: 690.00,
-      employeeCommuteKm: 5740.00,
-      paperUsageReams: 42,
-      cloudUsageHours: 295.20,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-11-01'),
-      vehicleFuelLitres: 300.52,
-      gasHeatingKWh: 2000.33,
-      electricityKWh: 630.00,
-      employeeCommuteKm: 5460.00,
-      paperUsageReams: 40,
-      cloudUsageHours: 280.80,
-    ),
-    Emission(
-      companyId: 'COMP001',
-      monthYear: DateTime.parse('2023-12-01'),
-      vehicleFuelLitres: 250.13,
-      gasHeatingKWh: 3000.33,
-      electricityKWh: 570.00,
-      employeeCommuteKm: 5250.00,
-      paperUsageReams: 38,
-      cloudUsageHours: 270.00,
-    ),
-  ]..sort((a, b) => a.monthYear.compareTo(b.monthYear));
-});
-
-// Net Zero Progress Provider
-final netZeroProgressProvider = Provider<double>((ref) {
-  final data = ref.watch(dashboardDataProvider);
-  final currentEmissions = data.last.total;
-  const baselineEmissions = 2470.0; // January baseline
-
-  final progress =
-      ((baselineEmissions - currentEmissions) / baselineEmissions) * 100;
-  return math.max(0, math.min(100, progress));
-});
 
 class CarbonDashboardView extends HookConsumerWidget {
   final String companyId;
@@ -286,26 +17,54 @@ class CarbonDashboardView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final data = ref.watch(dashboardDataProvider);
-    final netZeroProgress = ref.watch(netZeroProgressProvider);
+    final dataState = ref.watch(readEmissionViewModelProvider);
 
     return Scaffold(
       body: ResponsivePadding(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            children: [
-              // Content
-              _buildOverviewTab(data, netZeroProgress),
-              // _buildProgressTab(data, netZeroProgress),
-            ],
+          child: dataState.when(
+            data: (data) {
+              if (data.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No emissions data available for this company.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                );
+              }
+              final currentEmissions = data.last.total;
+              const baselineEmissions = 2470.0; // January baseline
+              final progress =
+                  ((baselineEmissions - currentEmissions) / baselineEmissions) *
+                  100;
+              final netZeroProgress = math.max(0, math.min(100, progress));
+              return _buildOverviewTab(
+                context,
+                data,
+                netZeroProgress.toDouble(),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Text(
+                'Error loading emissions data: $error',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.red),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildOverviewTab(List<Emission> data, double netZeroProgress) {
+  Widget _buildOverviewTab(
+    BuildContext context,
+    List<Emission> data,
+    double netZeroProgress,
+  ) {
     final currentMonth = data.last;
     final previousMonth = data[data.length - 2];
     final monthlyChange =
@@ -319,21 +78,25 @@ class CarbonDashboardView extends HookConsumerWidget {
           children: [
             Expanded(
               child: _buildKPICard(
+                context,
                 '${currentMonth.monthYear.monthNameShort} ${currentMonth.monthYear.year} Emissions',
                 '${currentMonth.total.toStringAsFixed(0)} tCO₂e',
                 monthlyChange < 0 ? Icons.trending_down : Icons.trending_up,
                 monthlyChange < 0 ? Colors.green : Colors.red,
                 '${monthlyChange.toStringAsFixed(1)}% vs last month',
+                true,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildKPICard(
+                context,
                 'Net Zero Progress',
                 '${netZeroProgress.toStringAsFixed(1)}%',
                 Icons.eco,
                 Colors.green,
                 'Towards carbon neutrality',
+                false,
               ),
             ),
           ],
@@ -344,13 +107,14 @@ class CarbonDashboardView extends HookConsumerWidget {
         // Scope Breakdown Pie Chart
         YearlyChart(
           title: 'Emissions by Scope',
+          allData: data,
           chartBuilder: (context, data) {
             return Row(
               children: [
                 Expanded(
                   child: PieChart(
                     PieChartData(
-                      sections: _buildPieChartSections(data),
+                      sections: _buildPieChartSections(context, data),
                       centerSpaceRadius: 64,
                       sectionsSpace: 0,
                     ),
@@ -391,6 +155,7 @@ class CarbonDashboardView extends HookConsumerWidget {
 
         YearlyChart(
           title: 'Scope Breakdown Monthly',
+          allData: data,
           chartBuilder: (context, data) {
             return BarChart(
               BarChartData(
@@ -401,9 +166,12 @@ class CarbonDashboardView extends HookConsumerWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 50,
-                      getTitlesWidget: (value, meta) => Text(
-                        '${value.toInt()}',
-                        style: const TextStyle(fontSize: 12),
+                      getTitlesWidget: (value, meta) => SideTitleWidget(
+                        meta: meta,
+                        child: Text(
+                          '${value.toInt()}',
+                          style: const TextStyle(fontSize: 10),
+                        ),
                       ),
                     ),
                   ),
@@ -469,6 +237,7 @@ class CarbonDashboardView extends HookConsumerWidget {
         // Monthly Trend Line Chart
         YearlyChart(
           title: 'Yearly Emissions Trend',
+          allData: data,
           chartBuilder: (context, data) {
             return LineChart(
               LineChartData(
@@ -480,9 +249,12 @@ class CarbonDashboardView extends HookConsumerWidget {
                       reservedSize: 50,
                       minIncluded: false,
                       maxIncluded: false,
-                      getTitlesWidget: (value, meta) => Text(
-                        '${value.toInt()}',
-                        style: const TextStyle(fontSize: 12),
+                      getTitlesWidget: (value, meta) => SideTitleWidget(
+                        meta: meta,
+                        child: Text(
+                          '${value.toInt()}',
+                          style: const TextStyle(fontSize: 10),
+                        ),
                       ),
                     ),
                   ),
@@ -635,14 +407,22 @@ class CarbonDashboardView extends HookConsumerWidget {
   }
 
   Widget _buildKPICard(
+    BuildContext context,
     String title,
     String value,
     IconData icon,
     Color color,
     String subtitle,
+    bool isPrimary,
   ) {
-    return Card(
-      elevation: 4,
+    return Card.filled(
+      color: isPrimary ? Theme.of(context).colorScheme.primary : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: isPrimary
+            ? BorderSide.none
+            : BorderSide(color: Colors.grey.shade300, width: 1.0),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -657,7 +437,9 @@ class CarbonDashboardView extends HookConsumerWidget {
                     title,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade600,
+                      color: isPrimary
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Colors.black87,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -667,12 +449,23 @@ class CarbonDashboardView extends HookConsumerWidget {
             const SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isPrimary
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Colors.black87,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: TextStyle(fontSize: 12, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 12,
+                color: isPrimary
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Colors.grey.shade600,
+              ),
             ),
           ],
         ),
@@ -766,7 +559,10 @@ class CarbonDashboardView extends HookConsumerWidget {
     );
   }
 
-  List<PieChartSectionData> _buildPieChartSections(List<Emission> data) {
+  List<PieChartSectionData> _buildPieChartSections(
+    BuildContext context,
+    List<Emission> data,
+  ) {
     final scope1 =
         (data.fold(0.0, (prev, curr) => prev + curr.scope1)) / data.length;
     final scope2 =
@@ -780,7 +576,7 @@ class CarbonDashboardView extends HookConsumerWidget {
         value: scope1,
         color: AppColors.scope1,
         title: '${((scope1 / total) * 100).toStringAsFixed(1)}%',
-        radius: 100,
+        radius: context.isPhone ? 48 : 100,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -791,7 +587,7 @@ class CarbonDashboardView extends HookConsumerWidget {
         value: scope2,
         color: AppColors.scope2,
         title: '${((scope2 / total) * 100).toStringAsFixed(1)}%',
-        radius: 100,
+        radius: context.isPhone ? 48 : 100,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -802,7 +598,7 @@ class CarbonDashboardView extends HookConsumerWidget {
         value: scope3,
         color: AppColors.scope3,
         title: '${((scope3 / total) * 100).toStringAsFixed(1)}%',
-        radius: 100,
+        radius: context.isPhone ? 48 : 100,
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
