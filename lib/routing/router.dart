@@ -14,6 +14,8 @@ import 'package:carbon_root_analytics/features/navigation_console/view/navigatio
 import 'package:carbon_root_analytics/features/navigation_console/view/pages/logs/logs_view.dart';
 import 'package:carbon_root_analytics/features/offset/offset_view.dart';
 import 'package:carbon_root_analytics/features/premium/view/premium_view.dart';
+import 'package:carbon_root_analytics/features/reduction/reduction_view.dart';
+import 'package:carbon_root_analytics/features/report/report_view.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
 import 'package:carbon_root_analytics/utils/ui/not_found_view.dart';
 import 'package:flutter/widgets.dart';
@@ -86,8 +88,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const CompanyDetailsView(),
               ),
               GoRoute(
+                path: Routes.consoleReduction,
+                builder: (context, state) => const ReductionInitiativesPage(),
+              ),
+              GoRoute(
                 path: Routes.consoleOffset,
                 builder: (context, state) => const OffsetView(),
+              ),
+              GoRoute(
+                path: Routes.consoleReport,
+                builder: (context, state) => const CarbonReportPage(),
               ),
               GoRoute(
                 path: Routes.consolePremium,

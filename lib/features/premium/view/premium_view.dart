@@ -119,18 +119,10 @@ class _PremiumViewState extends State<PremiumView> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Container(
-            width: 80,
+          SizedBox(
+            width: 180,
             height: 80,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF10B981), Color(0xFF059669)],
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Icon(Icons.eco, color: Colors.white, size: 40),
+            child: Image.asset('assets/logo.png', fit: BoxFit.cover),
           ),
           const SizedBox(height: 24),
           const Text(
@@ -265,7 +257,7 @@ class _PremiumViewState extends State<PremiumView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '\$',
+                      '£',
                       style: TextStyle(
                         color: Color(0xFF10B981),
                         fontSize: 24,
@@ -273,7 +265,7 @@ class _PremiumViewState extends State<PremiumView> {
                       ),
                     ),
                     Text(
-                      selectedPlan == 'monthly' ? '99' : '74',
+                      selectedPlan == 'monthly' ? '200' : '166',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 48,
@@ -289,7 +281,7 @@ class _PremiumViewState extends State<PremiumView> {
                 if (selectedPlan == 'annual') ...[
                   const SizedBox(height: 8),
                   const Text(
-                    'Billed annually (\$888/year)',
+                    'Billed annually (£2000/year)',
                     style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
                   ),
                 ],
@@ -572,7 +564,7 @@ class _PremiumViewState extends State<PremiumView> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Your 14-day free trial will begin immediately. You\'ll be charged ${selectedPlan == 'monthly' ? '\$99/month' : '\$74/month (billed annually)'} after the trial ends.',
+                'Your 14-day free trial will begin immediately. You\'ll be charged ${selectedPlan == 'monthly' ? '£99/month' : '£74/month (billed annually)'} after the trial ends.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
               ),

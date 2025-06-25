@@ -43,8 +43,6 @@ class _OffsetViewState extends State<OffsetView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
@@ -123,9 +121,8 @@ class _OffsetViewState extends State<OffsetView> {
   }
 
   Widget _buildHowItWorksSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-      color: Colors.grey.shade50,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 48),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -151,7 +148,7 @@ class _OffsetViewState extends State<OffsetView> {
               _buildStep(
                 '3',
                 'Pick a Local Project',
-                'Support initiatives like urban tree planting, renewable energy, or soil restoration in Greater Manchester.',
+                'Support initiatives like urban tree planting or soil restoration in Greater Manchester.',
                 Icons.location_on,
               ),
               _buildStep(
@@ -228,8 +225,8 @@ class _OffsetViewState extends State<OffsetView> {
   }
 
   Widget _buildWhyOffsetSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 48),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -286,9 +283,8 @@ class _OffsetViewState extends State<OffsetView> {
   }
 
   Widget _buildProjectsSection(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-      color: Colors.grey.shade50,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 48),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -403,8 +399,8 @@ class _OffsetViewState extends State<OffsetView> {
   }
 
   Widget _buildPricingSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 48),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

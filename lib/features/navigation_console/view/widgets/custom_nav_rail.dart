@@ -29,18 +29,18 @@ class CustomNavRail extends ConsumerWidget {
             label: Text(d.label),
           );
         }).toList(),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(),
-            IconButton(
-              onPressed: () {
-                ref.read(themeControllerProvider.notifier).toggleThemeMode();
-              },
-              icon: const Icon(Icons.wb_sunny_outlined),
-            ),
-          ],
-        ),
+        // trailing: Column(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     const SizedBox(),
+        //     IconButton(
+        //       onPressed: () {
+        //         ref.read(themeControllerProvider.notifier).toggleThemeMode();
+        //       },
+        //       icon: const Icon(Icons.wb_sunny_outlined),
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }
