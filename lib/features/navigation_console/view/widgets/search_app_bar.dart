@@ -69,37 +69,68 @@ class SearchAppBar extends HookConsumerWidget implements PreferredSizeWidget {
                     if (company == null) {
                       return const SizedBox.shrink();
                     }
-                    return Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(24.0),
-                            ),
-                            child: Text(
-                              company.name.isNotEmpty
-                                  ? company.name.substring(0, 2).toUpperCase()
-                                  : '?',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Logout'),
+                              content: const Text(
+                                'Are you sure you want to logout?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    // Trigger the logout action
+                                    ref
+                                        .read(logoutViewModelProvider.notifier)
+                                        .logout();
+                                  },
+                                  child: const Text('Logout'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(24.0),
+                              ),
+                              child: Text(
+                                company.name.isNotEmpty
+                                    ? company.name.substring(0, 2).toUpperCase()
+                                    : '?',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            company.name.length > 7
-                                ? '${company.name.substring(0, 6)}...'
-                                : company.name,
-                          ),
-                        ],
+                            const SizedBox(width: 8.0),
+                            Text(
+                              company.name.length > 7
+                                  ? '${company.name.substring(0, 6)}...'
+                                  : company.name,
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

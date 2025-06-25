@@ -3,7 +3,6 @@ import 'package:carbon_root_analytics/features/navigation_console/view/widgets/c
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/custom_nav_rail.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/search_app_bar.dart';
 import 'package:carbon_root_analytics/routing/routes.dart';
-import 'package:carbon_root_analytics/utils/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -63,9 +62,16 @@ class NavigationConsole extends StatelessWidget {
       return 0;
     } else if (location.startsWith(Routes.consoleLogs)) {
       return 1;
-    } else if (location.startsWith(Routes.consoleSettings)) {
+    } else if (location.startsWith(Routes.consoleReduction)) {
       return 2;
+    } else if (location.startsWith(Routes.consoleOffset)) {
+      return 3;
+    } else if (location.startsWith(Routes.consoleReport)) {
+      return 4;
+    } else if (location.startsWith(Routes.consolePremium)) {
+      return 5;
     }
+
     return 0;
   }
 
@@ -78,7 +84,16 @@ class NavigationConsole extends StatelessWidget {
         context.go(Routes.consoleLogs);
         break;
       case 2:
-        context.go(Routes.consoleSettings);
+        context.go(Routes.consoleReduction);
+        break;
+      case 3:
+        context.go(Routes.consoleOffset);
+        break;
+      case 4:
+        context.go(Routes.consoleReport);
+        break;
+      case 5:
+        context.go(Routes.consolePremium);
         break;
     }
   }
