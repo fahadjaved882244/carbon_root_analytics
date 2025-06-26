@@ -1,5 +1,5 @@
 import 'package:carbon_root_analytics/features/company/domain/company_model.dart';
-import 'package:carbon_root_analytics/features/emission/ui/create_emission/view/create_emission_view.dart';
+import 'package:carbon_root_analytics/features/emission/ui/create_emission/view/create_emission_form_view.dart';
 import 'package:carbon_root_analytics/features/navigation_console/utils/media_query_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +23,7 @@ class NoEmissionWidget extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (context) {
-                  final content = CreateEmissionView(companyId: company.id);
+                  final content = CarbonCalculatorScreen(companyId: company.id);
                   if (context.isPhone) {
                     return Dialog.fullscreen(
                       key: const Key('create_emission_fullscreen_dialog'),

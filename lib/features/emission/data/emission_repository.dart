@@ -1,5 +1,5 @@
 import 'package:carbon_root_analytics/features/emission/data/i_emission_repository.dart';
-import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
+import 'package:carbon_root_analytics/features/emission/domain/carbon_emission.dart';
 import 'package:carbon_root_analytics/utils/core/result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -7,7 +7,7 @@ class EmissionRepository implements IEmissionRepository {
   final firestore = FirebaseFirestore.instance;
 
   @override
-  Stream<Result<List<Emission>>> fetchEmissionData(
+  Stream<Result<List<CarbonEmission>>> fetchEmissionData(
     String userId,
     String companyId,
   ) async* {
@@ -21,7 +21,7 @@ class EmissionRepository implements IEmissionRepository {
           .snapshots();
       await for (final querySnapshot in snapshot) {
         final emissions = querySnapshot.docs
-            .map((doc) => Emission.fromMap(doc.data()))
+            .map((doc) => CarbonEmission.fromMap(doc.data()))
             .toList();
 
         yield Result.ok(emissions);
@@ -32,9 +32,9 @@ class EmissionRepository implements IEmissionRepository {
   }
 
   @override
-  Future<Result<Emission>> createEmissionRecord(
+  Future<Result<CarbonEmission>> createEmissionRecord(
     String userId,
-    Emission emission,
+    CarbonEmission emission,
   ) async {
     try {
       await firestore

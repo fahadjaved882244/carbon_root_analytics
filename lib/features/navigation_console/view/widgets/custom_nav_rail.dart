@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:carbon_root_analytics/features/navigation_console/model/destination.dart';
-import 'package:carbon_root_analytics/utils/theme/theme_controller.dart';
 
 class CustomNavRail extends ConsumerWidget {
   final int selectedIndex;

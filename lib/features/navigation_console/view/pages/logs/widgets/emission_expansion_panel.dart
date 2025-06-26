@@ -1,4 +1,4 @@
-import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
+import 'package:carbon_root_analytics/features/emission/domain/carbon_emission.dart';
 import 'package:carbon_root_analytics/features/emission/ui/read_emission/view_model/read_emission_view_model.dart';
 import 'package:carbon_root_analytics/utils/core/data_time_x.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class EmissionExpansionPanel extends HookConsumerWidget {
         if (emissions.isEmpty) {
           return const ListTile(title: Text('No emissions data available'));
         }
-        final groupedByYear = <int, List<Emission>>{};
+        final groupedByYear = <int, List<CarbonEmission>>{};
 
         for (var emission in emissions) {
           final year = emission.monthYear.year;
@@ -35,7 +35,7 @@ class EmissionExpansionPanel extends HookConsumerWidget {
 }
 
 class _EmissionExpansionPanelItem extends HookConsumerWidget {
-  final List<MapEntry<int, List<Emission>>> emissionGroup;
+  final List<MapEntry<int, List<CarbonEmission>>> emissionGroup;
   const _EmissionExpansionPanelItem({required this.emissionGroup});
 
   @override

@@ -1,4 +1,4 @@
-import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
+import 'package:carbon_root_analytics/features/emission/domain/carbon_emission.dart';
 import 'package:carbon_root_analytics/features/emission/ui/read_emission/view/widgets/yearly_chart.dart';
 import 'package:carbon_root_analytics/features/emission/ui/read_emission/view_model/read_emission_view_model.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
@@ -33,7 +33,7 @@ class CarbonDashboardView extends HookConsumerWidget {
                   ),
                 );
               }
-              final currentEmissions = data.last.total;
+              final currentEmissions = data.last.totalEmissions;
               const baselineEmissions = 2470.0; // January baseline
               final progress =
                   ((baselineEmissions - currentEmissions) / baselineEmissions) *
@@ -62,13 +62,14 @@ class CarbonDashboardView extends HookConsumerWidget {
 
   Widget _buildOverviewTab(
     BuildContext context,
-    List<Emission> data,
+    List<CarbonEmission> data,
     double netZeroProgress,
   ) {
     final currentMonth = data.last;
     final previousMonth = data[data.length - 2];
     final monthlyChange =
-        ((currentMonth.total - previousMonth.total) / previousMonth.total) *
+        ((currentMonth.totalEmissions - previousMonth.totalEmissions) /
+            previousMonth.totalEmissions) *
         100;
 
     return Column(
@@ -80,7 +81,7 @@ class CarbonDashboardView extends HookConsumerWidget {
               child: _buildKPICard(
                 context,
                 '${currentMonth.monthYear.monthNameShort} ${currentMonth.monthYear.year} Emissions',
-                '${currentMonth.total.toStringAsFixed(0)} tCO₂e',
+                '${currentMonth.totalEmissions.toStringAsFixed(0)} tCO₂e',
                 monthlyChange < 0 ? Icons.trending_down : Icons.trending_up,
                 monthlyChange < 0 ? Colors.green : Colors.red,
                 '${monthlyChange.toStringAsFixed(1)}% vs last month',
@@ -126,21 +127,21 @@ class CarbonDashboardView extends HookConsumerWidget {
                   children: [
                     _buildScopeCard(
                       'Scope 1',
-                      data.last.scope1,
+                      data.last.scope1Emissions,
                       AppColors.scope1,
                       'Direct emissions',
                     ),
                     const SizedBox(height: 24),
                     _buildScopeCard(
                       'Scope 2',
-                      data.last.scope2,
+                      data.last.scope2Emissions,
                       AppColors.scope2,
                       'Indirect energy',
                     ),
                     const SizedBox(height: 24),
                     _buildScopeCard(
                       'Scope 3',
-                      data.last.scope3,
+                      data.last.scope3Emissions,
                       AppColors.scope3,
                       'Value chain',
                     ),
@@ -203,23 +204,26 @@ class CarbonDashboardView extends HookConsumerWidget {
                     // groupVertically: true,
                     barRods: [
                       BarChartRodData(
-                        toY: entry.value.total,
+                        toY: entry.value.totalEmissions,
                         color: Colors.grey,
                         width: 12,
                         rodStackItems: [
                           BarChartRodStackItem(
                             0,
-                            entry.value.scope1,
+                            entry.value.scope1Emissions,
                             AppColors.scope1,
                           ),
                           BarChartRodStackItem(
-                            entry.value.scope1 + 4,
-                            entry.value.scope1 + entry.value.scope2,
+                            entry.value.scope1Emissions + 4,
+                            entry.value.scope1Emissions +
+                                entry.value.scope2Emissions,
                             AppColors.scope2,
                           ),
                           BarChartRodStackItem(
-                            entry.value.scope1 + entry.value.scope2 + 4,
-                            entry.value.total,
+                            entry.value.scope1Emissions +
+                                entry.value.scope2Emissions +
+                                4,
+                            entry.value.totalEmissions,
                             AppColors.scope3,
                           ),
                         ],
@@ -236,7 +240,7 @@ class CarbonDashboardView extends HookConsumerWidget {
 
         // Monthly Trend Line Chart
         YearlyChart(
-          title: 'Yearly Emissions Trend',
+          title: 'Monthly Emissions Trend',
           allData: data,
           chartBuilder: (context, data) {
             return LineChart(
@@ -287,7 +291,10 @@ class CarbonDashboardView extends HookConsumerWidget {
                 lineBarsData: [
                   LineChartBarData(
                     spots: data.asMap().entries.map((entry) {
-                      return FlSpot(entry.key.toDouble(), entry.value.total);
+                      return FlSpot(
+                        entry.key.toDouble(),
+                        entry.value.totalEmissions,
+                      );
                     }).toList(),
                     isCurved: true,
                     color: AppColors.primary,
@@ -298,16 +305,19 @@ class CarbonDashboardView extends HookConsumerWidget {
                       color: AppColors.primary.withOpacity(0.2),
                     ),
                   ),
-                  LineChartBarData(
-                    spots: data.asMap().entries.map((entry) {
-                      return FlSpot(entry.key.toDouble(), entry.value.target);
-                    }).toList(),
-                    isCurved: true,
-                    color: Theme.of(context).colorScheme.tertiary,
-                    barWidth: 2,
-                    dashArray: [5, 5],
-                    dotData: const FlDotData(show: false),
-                  ),
+                  // LineChartBarData(
+                  //   spots: data.asMap().entries.map((entry) {
+                  //     return FlSpot(
+                  //       entry.key.toDouble(),
+                  //       entry.value.targetEmissions,
+                  //     );
+                  //   }).toList(),
+                  //   isCurved: true,
+                  //   color: Theme.of(context).colorScheme.tertiary,
+                  //   barWidth: 2,
+                  //   dashArray: [5, 5],
+                  //   dotData: const FlDotData(show: false),
+                  // ),
                 ],
               ),
             );
@@ -317,7 +327,7 @@ class CarbonDashboardView extends HookConsumerWidget {
     );
   }
 
-  Widget _buildProgressTab(List<Emission> data, double netZeroProgress) {
+  Widget _buildProgressTab(List<CarbonEmission> data, double netZeroProgress) {
     final targetYear = 2030;
     final currentYear = DateTime.now().year;
     final yearsRemaining = targetYear - currentYear;
@@ -386,7 +396,7 @@ class CarbonDashboardView extends HookConsumerWidget {
             Expanded(
               child: _buildProgressMetric(
                 'Emissions Reduced',
-                '${(data.first.total - data.last.total).toStringAsFixed(0)} tCO₂e',
+                '${(data.first.totalEmissions - data.last.totalEmissions).toStringAsFixed(0)} tCO₂e',
                 Icons.trending_down,
                 Colors.green,
               ),
@@ -395,7 +405,7 @@ class CarbonDashboardView extends HookConsumerWidget {
             Expanded(
               child: _buildProgressMetric(
                 'Monthly Reduction',
-                '${((data.first.total - data.last.total) / data.length).toStringAsFixed(0)} tCO₂e',
+                '${((data.first.totalEmissions - data.last.totalEmissions) / data.length).toStringAsFixed(0)} tCO₂e',
                 Icons.speed,
                 Colors.blue,
               ),
@@ -561,14 +571,17 @@ class CarbonDashboardView extends HookConsumerWidget {
 
   List<PieChartSectionData> _buildPieChartSections(
     BuildContext context,
-    List<Emission> data,
+    List<CarbonEmission> data,
   ) {
     final scope1 =
-        (data.fold(0.0, (prev, curr) => prev + curr.scope1)) / data.length;
+        (data.fold(0.0, (prev, curr) => prev + curr.scope1Emissions)) /
+        data.length;
     final scope2 =
-        (data.fold(0.0, (prev, curr) => prev + curr.scope2)) / data.length;
+        (data.fold(0.0, (prev, curr) => prev + curr.scope2Emissions)) /
+        data.length;
     final scope3 =
-        (data.fold(0.0, (prev, curr) => prev + curr.scope3)) / data.length;
+        (data.fold(0.0, (prev, curr) => prev + curr.scope3Emissions)) /
+        data.length;
     final total = scope1 + scope2 + scope3;
 
     return [

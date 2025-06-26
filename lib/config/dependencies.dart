@@ -10,7 +10,7 @@ import 'package:carbon_root_analytics/features/company/ui/create_company/view_mo
 import 'package:carbon_root_analytics/features/company/ui/read_comany/view_model/read_company_view_model.dart';
 import 'package:carbon_root_analytics/features/emission/data/emission_repository.dart';
 import 'package:carbon_root_analytics/features/emission/data/i_emission_repository.dart';
-import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
+import 'package:carbon_root_analytics/features/emission/domain/carbon_emission.dart';
 import 'package:carbon_root_analytics/features/emission/ui/create_emission/view_model/create_emission_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -59,10 +59,10 @@ final emissionRepositoryProvider = Provider<IEmissionRepository>((ref) {
 });
 
 final createEmissionViewModelProvider =
-    StateNotifierProvider<CreateEmissionViewModel, AsyncValue<Emission?>>((
-      ref,
-    ) {
-      final emissionRepository = ref.watch(emissionRepositoryProvider);
-      final userId = ref.watch(authStateProvider).value?.uid;
-      return CreateEmissionViewModel(emissionRepository, userId);
-    });
+    StateNotifierProvider<CreateEmissionViewModel, AsyncValue<CarbonEmission?>>(
+      (ref) {
+        final emissionRepository = ref.watch(emissionRepositoryProvider);
+        final userId = ref.watch(authStateProvider).value?.uid;
+        return CreateEmissionViewModel(emissionRepository, userId);
+      },
+    );

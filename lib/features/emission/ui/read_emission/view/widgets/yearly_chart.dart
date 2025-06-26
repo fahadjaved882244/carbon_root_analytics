@@ -1,4 +1,4 @@
-import 'package:carbon_root_analytics/features/emission/domain/emission.dart';
+import 'package:carbon_root_analytics/features/emission/domain/carbon_emission.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,8 +6,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class YearlyChart extends HookConsumerWidget {
   final String title;
-  final List<Emission> allData;
-  final Widget Function(BuildContext context, List<Emission> data) chartBuilder;
+  final List<CarbonEmission> allData;
+  final Widget Function(BuildContext context, List<CarbonEmission> data)
+  chartBuilder;
   const YearlyChart({
     super.key,
     required this.title,

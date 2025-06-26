@@ -1,599 +1,600 @@
-import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
+import 'package:carbon_root_analytics/features/emission/domain/carbon_emission.dart';
+import 'package:carbon_root_analytics/features/emission/ui/read_emission/view_model/read_emission_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CarbonReportPage extends StatefulWidget {
-  const CarbonReportPage({super.key});
+class GenerateReportTab extends ConsumerStatefulWidget {
+  const GenerateReportTab({super.key});
 
   @override
-  createState() => _CarbonReportPageState();
+  createState() => _GenerateReportTabState();
 }
 
-class _CarbonReportPageState extends State<CarbonReportPage> {
-  String selectedScope = 'Scope 1 Emissions';
+class _GenerateReportTabState extends ConsumerState<GenerateReportTab> {
+  String selectedScope = 'All Scopes';
   String selectedCategory = 'All Categories';
-  String selectedUsage = 'Daily Usage (Hrs)';
-  String selectedPower = 'Power Rating (W)';
-  int itemsPerPage = 5;
-  int currentPage = 1;
+  String selectedMonth = 'All Months';
+  String selectedYear = 'All Years';
 
-  final List<String> scopes = [
-    'Scope 1 Emissions',
-    'Scope 2 Emissions',
-    'Scope 3 Emissions',
+  // Emission factors
+  static const Map<String, Map<String, double>> emissionFactors = {
+    'scope1': {
+      'gas': 0.1829, // kg CO₂/kWh
+      'dieselGen': 2.68, // kg CO₂/L
+      'companyCars': 0.238, // kg CO₂/km
+      'deliveryVans': 0.220, // kg CO₂/km
+      'forklifts': 2.68, // kg CO₂/L
+      'refrigerant': 1430, // GWP for R134a
+    },
+    'scope2': {
+      'electricity': 0.207, // kg CO₂/kWh
+      'tdLosses': 0.0183, // kg CO₂/kWh
+    },
+    'scope3': {
+      'comCar': 0.171, // kg CO₂/km
+      'comBus': 0.082, // kg CO₂/km
+      'comTrain': 0.041, // kg CO₂/km
+      'foodWaste': 3.3, // kg CO₂/tonne
+      'recycledWaste': 0.021, // kg CO₂/tonne
+      'paperReams': 3.29, // kg CO₂/ream
+    },
+  };
+
+  // Category mappings
+  final Map<String, Map<String, dynamic>> categoryMappings = {
+    'Gas Consumption': {
+      'scope': 'Scope 1',
+      'unit': 'kWh',
+      'field': 'gasConsumption',
+      'factor': 0.1829,
+    },
+    'Diesel Generator': {
+      'scope': 'Scope 1',
+      'unit': 'L',
+      'field': 'dieselGenConsumption',
+      'factor': 2.68,
+    },
+    'Company Cars': {
+      'scope': 'Scope 1',
+      'unit': 'km',
+      'field': 'companyCarDistance',
+      'factor': 0.238,
+    },
+    'Delivery Vans': {
+      'scope': 'Scope 1',
+      'unit': 'km',
+      'field': 'deliveryVanDistance',
+      'factor': 0.220,
+    },
+    'Forklifts': {
+      'scope': 'Scope 1',
+      'unit': 'L',
+      'field': 'forkliftFuelConsumption',
+      'factor': 2.68,
+    },
+    'Refrigerant': {
+      'scope': 'Scope 1',
+      'unit': 'kg',
+      'field': 'refrigerantLeakage',
+      'factor': 1430,
+    },
+    'Electricity': {
+      'scope': 'Scope 2',
+      'unit': 'kWh',
+      'field': 'electricityConsumption',
+      'factor': 0.207,
+    },
+    'T&D Losses': {
+      'scope': 'Scope 2',
+      'unit': 'kWh',
+      'field': 'electricityForTdLosses',
+      'factor': 0.0183,
+    },
+    'Commute Car': {
+      'scope': 'Scope 3',
+      'unit': 'km',
+      'field': 'commuteCarDistance',
+      'factor': 0.171,
+    },
+    'Commute Bus': {
+      'scope': 'Scope 3',
+      'unit': 'km',
+      'field': 'commuteBusDistance',
+      'factor': 0.082,
+    },
+    'Commute Train': {
+      'scope': 'Scope 3',
+      'unit': 'km',
+      'field': 'commuteTrainDistance',
+      'factor': 0.041,
+    },
+    'Food Waste': {
+      'scope': 'Scope 3',
+      'unit': 'tonnes',
+      'field': 'foodWasteAmount',
+      'factor': 3.3,
+    },
+    'Recycled Waste': {
+      'scope': 'Scope 3',
+      'unit': 'tonnes',
+      'field': 'recycledWasteAmount',
+      'factor': 0.021,
+    },
+    'Paper Reams': {
+      'scope': 'Scope 3',
+      'unit': 'reams',
+      'field': 'paperReamsCount',
+      'factor': 3.29,
+    },
+  };
+
+  List<String> get scopeOptions => [
+    'All Scopes',
+    'Scope 1',
+    'Scope 2',
+    'Scope 3',
   ];
-
-  final List<String> categories = [
+  List<String> get categoryOptions => [
     'All Categories',
-    'Stationary Combustion',
-    'Mobile Combustion',
-    'Fugitive Emissions',
-    'Process Emissions',
+    ...categoryMappings.keys,
   ];
-
-  final List<EmissionData> allData = [
-    // Stationary Combustion
-    EmissionData(
-      'Gas Boilers',
-      'Stationary Combustion',
-      8,
-      15000,
-      8,
-      3600,
-      0.12,
-      432,
-      120,
-    ),
-    EmissionData(
-      'Water Heating',
-      'Stationary Combustion',
-      12,
-      8000,
-      6,
-      2880,
-      0.12,
-      346,
-      85,
-    ),
-    EmissionData(
-      'Diesel/Gas Generator',
-      'Stationary Combustion',
-      3,
-      25000,
-      4,
-      1200,
-      0.12,
-      144,
-      200,
-    ),
-
-    // Mobile Combustion
-    EmissionData(
-      'Company Cars',
-      'Mobile Combustion',
-      15,
-      0,
-      8,
-      0,
-      0.15,
-      1800,
-      250,
-    ),
-    EmissionData(
-      'Delivery Vans',
-      'Mobile Combustion',
-      8,
-      0,
-      10,
-      0,
-      0.15,
-      1440,
-      180,
-    ),
-    EmissionData(
-      'Forklifts',
-      'Mobile Combustion',
-      5,
-      12000,
-      6,
-      1800,
-      0.12,
-      216,
-      90,
-    ),
-    EmissionData(
-      'Construction Machinery',
-      'Mobile Combustion',
-      3,
-      45000,
-      8,
-      4320,
-      0.12,
-      518,
-      300,
-    ),
-
-    // Fugitive Emissions
-    EmissionData(
-      'Air Conditioners',
-      'Fugitive Emissions',
-      25,
-      2500,
-      12,
-      9000,
-      0.12,
-      1080,
-      180,
-    ),
-    EmissionData(
-      'Refrigerators',
-      'Fugitive Emissions',
-      50,
-      150,
-      24,
-      10800,
-      0.12,
-      1296,
-      195,
-    ),
-    EmissionData(
-      'Cold Storages',
-      'Fugitive Emissions',
-      4,
-      8000,
-      24,
-      23040,
-      0.12,
-      2765,
-      450,
-    ),
-    EmissionData(
-      'HVAC Systems',
-      'Fugitive Emissions',
-      6,
-      12000,
-      12,
-      25920,
-      0.12,
-      3110,
-      520,
-    ),
-
-    // Process Emissions
-    EmissionData(
-      'Metal Cutting/Welding',
-      'Process Emissions',
-      8,
-      5500,
-      6,
-      7920,
-      0.12,
-      950,
-      160,
-    ),
-    EmissionData(
-      'Ovens (Gas Use)',
-      'Process Emissions',
-      4,
-      18000,
-      8,
-      17280,
-      0.12,
-      2074,
-      380,
-    ),
-    EmissionData(
-      'Fuel Powered Landscaping Equipment',
-      'Process Emissions',
-      12,
-      3000,
-      4,
-      4320,
-      0.12,
-      518,
-      85,
-    ),
+  List<String> get monthOptions => [
+    'All Months',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
+  List<String> get yearOptions => ['All Years', '2025', '2024'];
 
-  List<EmissionData> get filteredData {
-    List<EmissionData> filtered = allData;
+  List<Map<String, dynamic>> getFilteredData(List<CarbonEmission> emissions) {
+    List<Map<String, dynamic>> reportData = [];
 
-    if (selectedCategory != 'All Categories') {
-      filtered = filtered
-          .where((item) => item.category == selectedCategory)
-          .toList();
+    for (String category in categoryMappings.keys) {
+      final categoryInfo = categoryMappings[category]!;
+
+      // Apply scope filter
+      if (selectedScope != 'All Scopes' &&
+          categoryInfo['scope'] != selectedScope) {
+        continue;
+      }
+
+      // Apply category filter
+      if (selectedCategory != 'All Categories' &&
+          category != selectedCategory) {
+        continue;
+      }
+
+      double totalUnits = 0;
+      double totalEmissions = 0;
+      int dataPointsCount = 0;
+
+      for (CarbonEmission emission in emissions) {
+        // Apply year filter
+        if (selectedYear != 'All Years' &&
+            emission.monthYear.year.toString() != selectedYear) {
+          continue;
+        }
+
+        // Apply month filter
+        if (selectedMonth != 'All Months') {
+          int monthIndex = monthOptions.indexOf(selectedMonth);
+          if (emission.monthYear.month != monthIndex) {
+            continue;
+          }
+        }
+
+        double value = _getFieldValue(emission, categoryInfo['field']);
+        totalUnits += value;
+        totalEmissions += value * categoryInfo['factor'];
+        if (value > 0) dataPointsCount++;
+      }
+
+      if (totalUnits > 0 || selectedCategory == category) {
+        reportData.add({
+          'category': category,
+          'scope': categoryInfo['scope'],
+          'unit': categoryInfo['unit'],
+          'totalUnits': totalUnits,
+          'totalEmissions': totalEmissions,
+          'emissionFactor': categoryInfo['factor'],
+          'dataPoints': dataPointsCount,
+        });
+      }
     }
 
-    return filtered;
+    return reportData;
   }
 
-  List<EmissionData> get paginatedData {
-    final startIndex = (currentPage - 1) * itemsPerPage;
-    final endIndex = startIndex + itemsPerPage;
-    return filteredData.sublist(
-      startIndex,
-      endIndex > filteredData.length ? filteredData.length : endIndex,
+  double _getFieldValue(CarbonEmission emission, String fieldName) {
+    switch (fieldName) {
+      case 'gasConsumption':
+        return emission.gasConsumption;
+      case 'dieselGenConsumption':
+        return emission.dieselGenConsumption;
+      case 'companyCarDistance':
+        return emission.companyCarDistance;
+      case 'deliveryVanDistance':
+        return emission.deliveryVanDistance;
+      case 'forkliftFuelConsumption':
+        return emission.forkliftFuelConsumption;
+      case 'refrigerantLeakage':
+        return emission.refrigerantLeakage;
+      case 'electricityConsumption':
+        return emission.electricityConsumption;
+      case 'electricityForTdLosses':
+        return emission.electricityForTdLosses;
+      case 'commuteCarDistance':
+        return emission.commuteCarDistance;
+      case 'commuteBusDistance':
+        return emission.commuteBusDistance;
+      case 'commuteTrainDistance':
+        return emission.commuteTrainDistance;
+      case 'foodWasteAmount':
+        return emission.foodWasteAmount;
+      case 'recycledWasteAmount':
+        return emission.recycledWasteAmount;
+      case 'paperReamsCount':
+        return emission.paperReamsCount;
+      default:
+        return 0.0;
+    }
+  }
+
+  void _clearAllFilters() {
+    setState(() {
+      selectedScope = 'All Scopes';
+      selectedCategory = 'All Categories';
+      selectedMonth = 'All Months';
+      selectedYear = 'All Years';
+    });
+  }
+
+  void _generateReport() {
+    // Handle report generation
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Report generated successfully!')),
     );
   }
 
-  int get totalPages => (filteredData.length / itemsPerPage).ceil();
+  void _downloadReport() {
+    // Handle report download
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Report download started!')));
+  }
 
   @override
   Widget build(BuildContext context) {
+    final dataState = ref.watch(readEmissionViewModelProvider);
+
+    final filteredData = getFilteredData(dataState.valueOrNull ?? []);
+
     return Scaffold(
-      body: ResponsivePadding(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              SizedBox(height: 32),
-              _buildFilters(),
-              SizedBox(height: 24),
-              Expanded(child: _buildDataTable()),
-              SizedBox(height: 16),
-              _buildPagination(),
-            ],
+      backgroundColor: Colors.grey[50],
+      body: dataState.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Text(
+            'Error loading emissions data: $error',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.red),
           ),
         ),
+        data: (data) {
+          if (data.isEmpty) {
+            return Center(
+              child: Text(
+                'No emissions data available for this company.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Generate Report',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: _downloadReport,
+                      icon: const Icon(Icons.download, color: Colors.white),
+                      label: const Text(
+                        'Download Report',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF8BC34A),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 32),
+
+                // Filters Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDropdown(
+                        'Scope',
+                        selectedScope,
+                        scopeOptions,
+                        (value) {
+                          setState(() => selectedScope = value!);
+                        },
+                      ),
+                    ),
+                    // const SizedBox(width: 16),
+                    // Expanded(
+                    //   child: _buildDropdown(
+                    //     'Category',
+                    //     selectedCategory,
+                    //     categoryOptions,
+                    //     (value) {
+                    //       setState(() => selectedCategory = value!);
+                    //     },
+                    //   ),
+                    // ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildDropdown(
+                        'Month',
+                        selectedMonth,
+                        monthOptions,
+                        (value) {
+                          setState(() => selectedMonth = value!);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildDropdown('Year', selectedYear, yearOptions, (
+                        value,
+                      ) {
+                        setState(() => selectedYear = value!);
+                      }),
+                    ),
+                    const SizedBox(width: 16),
+                    OutlinedButton(
+                      onPressed: _clearAllFilters,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text('Clear All'),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: _generateReport,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF8BC34A),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Generate',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 32),
+
+                // Data Table
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: SingleChildScrollView(
+                      child: DataTable(
+                        columnSpacing: 24,
+                        headingRowColor: MaterialStateProperty.all(
+                          Colors.grey[100],
+                        ),
+                        headingTextStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          fontSize: 14,
+                        ),
+                        columns: const [
+                          DataColumn(label: Text('Categories')),
+                          DataColumn(label: Text('Scope')),
+                          DataColumn(label: Text('Unit')),
+                          DataColumn(label: Text('Total Units')),
+                          DataColumn(label: Text('Emission Factor')),
+                          DataColumn(label: Text('Total Emissions\n(kg CO₂)')),
+                          // DataColumn(label: Text('Data Points')),
+                        ],
+                        rows: filteredData.map((data) {
+                          return DataRow(
+                            color: MaterialStateProperty.resolveWith<Color?>((
+                              Set<MaterialState> states,
+                            ) {
+                              if (states.contains(MaterialState.hovered)) {
+                                return Colors.grey[50];
+                              }
+                              return null;
+                            }),
+                            cells: [
+                              DataCell(
+                                Text(
+                                  data['category'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _getScopeColor(data['scope']),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    data['scope'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DataCell(Text(data['unit'])),
+                              DataCell(
+                                Text(data['totalUnits'].toStringAsFixed(1)),
+                              ),
+                              DataCell(
+                                Text(data['emissionFactor'].toStringAsFixed(4)),
+                              ),
+                              DataCell(
+                                Text(
+                                  data['totalEmissions'].toStringAsFixed(2),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              // DataCell(Text(data['dataPoints'].toString())),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Summary
+                if (filteredData.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(top: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue[200]!),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total Categories: ${filteredData.length}',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          'Total Emissions: ${filteredData.fold(0.0, (sum, data) => sum + data['totalEmissions']).toStringAsFixed(2)} kg CO₂',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Generate Report',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        ElevatedButton.icon(
-          onPressed: _downloadReport,
-          icon: Icon(Icons.download, color: Colors.white),
-          label: Text('Download Report', style: TextStyle(color: Colors.white)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF9ACD32),
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFilters() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildDropdown(selectedScope, scopes, (value) {
-            setState(() => selectedScope = value!);
-          }),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: _buildDropdown(selectedCategory, categories, (value) {
-            setState(() {
-              selectedCategory = value!;
-              currentPage = 1; // Reset to first page when filter changes
-            });
-          }),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: _buildDropdown(
-            selectedUsage,
-            ['Daily Usage (Hrs)', 'Weekly Usage (Hrs)', 'Monthly Usage (Hrs)'],
-            (value) {
-              setState(() => selectedUsage = value!);
-            },
-          ),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: _buildDropdown(
-            selectedPower,
-            ['Power Rating (W)', 'Power Rating (kW)', 'Fuel Consumption (L)'],
-            (value) {
-              setState(() => selectedPower = value!);
-            },
-          ),
-        ),
-        SizedBox(width: 16),
-        OutlinedButton(
-          onPressed: _clearAll,
-          child: Text('Clear All'),
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ),
-        ),
-        SizedBox(width: 16),
-        ElevatedButton(
-          onPressed: _generate,
-          child: Text('Generate', style: TextStyle(color: Colors.white)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF9ACD32),
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildDropdown(
+    String label,
     String value,
-    List<String> items,
-    ValueChanged<String?> onChanged,
+    List<String> options,
+    Function(String?) onChanged,
   ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        border: Border.all(color: Colors.grey[300]!),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.white,
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
           isExpanded: true,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(value: item, child: Text(item));
+          items: options.map((String option) {
+            return DropdownMenuItem<String>(value: option, child: Text(option));
           }).toList(),
           onChanged: onChanged,
+          icon: const Icon(Icons.keyboard_arrow_down),
         ),
       ),
     );
   }
 
-  Widget _buildDataTable() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildTableHeader(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: paginatedData.length,
-              itemBuilder: (context, index) {
-                return _buildTableRow(paginatedData[index], index % 2 == 1);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+  Color _getScopeColor(String scope) {
+    switch (scope) {
+      case 'Scope 1':
+        return Colors.red[400]!;
+      case 'Scope 2':
+        return Colors.orange[400]!;
+      case 'Scope 3':
+        return Colors.blue[400]!;
+      default:
+        return Colors.grey[400]!;
+    }
   }
-
-  Widget _buildTableHeader() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: _buildHeaderCell('Categories')),
-          Expanded(flex: 1, child: _buildHeaderCell('Quantity')),
-          Expanded(flex: 1, child: _buildHeaderCell('Power Rating\n(W)')),
-          Expanded(flex: 1, child: _buildHeaderCell('Daily Usage\n(Hrs)')),
-          Expanded(
-            flex: 1,
-            child: _buildHeaderCell('Monthly\nConsumption (kWh)'),
-          ),
-          Expanded(flex: 1, child: _buildHeaderCell('Cost Per\nkWh (\$)')),
-          Expanded(flex: 1, child: _buildHeaderCell('Monthly\nCost (\$)')),
-          Expanded(
-            flex: 1,
-            child: _buildHeaderCell('Monthly\nSavings Achieved (\$)'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderCell(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 14,
-        color: Colors.grey.shade700,
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildTableRow(EmissionData data, bool isOdd) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isOdd ? Colors.grey.shade500 : Colors.white,
-      ),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: _buildDataCell(data.name)),
-          Expanded(flex: 1, child: _buildDataCell(data.quantity.toString())),
-          Expanded(flex: 1, child: _buildDataCell(data.powerRating.toString())),
-          Expanded(flex: 1, child: _buildDataCell(data.dailyUsage.toString())),
-          Expanded(
-            flex: 1,
-            child: _buildDataCell(data.monthlyConsumption.toString()),
-          ),
-          Expanded(
-            flex: 1,
-            child: _buildDataCell('\$${data.costPerKwh.toStringAsFixed(2)}'),
-          ),
-          Expanded(flex: 1, child: _buildDataCell('\$${data.monthlyCost}')),
-          Expanded(flex: 1, child: _buildDataCell('\$${data.monthlySavings}')),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDataCell(String text) {
-    return Text(
-      text,
-      style: TextStyle(fontSize: 14, color: Colors.black87),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildPagination() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text('Items Per Page'),
-            SizedBox(width: 8),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  value: itemsPerPage,
-                  items: [5, 10, 15, 20].map((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      itemsPerPage = value!;
-                      currentPage = 1;
-                    });
-                  },
-                ),
-              ),
-            ),
-            SizedBox(width: 16),
-            Text(
-              '${((currentPage - 1) * itemsPerPage) + 1}-${currentPage * itemsPerPage > filteredData.length ? filteredData.length : currentPage * itemsPerPage} of ${filteredData.length} items',
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            for (int i = 1; i <= totalPages && i <= 5; i++)
-              GestureDetector(
-                onTap: () => setState(() => currentPage = i),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: currentPage == i
-                        ? Color(0xFF9ACD32)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: currentPage == i
-                          ? Color(0xFF9ACD32)
-                          : Colors.grey.shade300,
-                    ),
-                  ),
-                  child: Text(
-                    i.toString(),
-                    style: TextStyle(
-                      color: currentPage == i ? Colors.white : Colors.black87,
-                      fontWeight: currentPage == i
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                  ),
-                ),
-              ),
-            if (totalPages > 5)
-              GestureDetector(
-                onTap: () => setState(
-                  () => currentPage = currentPage < totalPages
-                      ? currentPage + 1
-                      : currentPage,
-                ),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Icon(Icons.chevron_right),
-                ),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  void _clearAll() {
-    setState(() {
-      selectedScope = 'Scope 1 Emissions';
-      selectedCategory = 'All Categories';
-      selectedUsage = 'Daily Usage (Hrs)';
-      selectedPower = 'Power Rating (W)';
-      currentPage = 1;
-    });
-  }
-
-  void _generate() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Report generated successfully!'),
-        backgroundColor: Color(0xFF9ACD32),
-      ),
-    );
-  }
-
-  void _downloadReport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Report download started!'),
-        backgroundColor: Color(0xFF9ACD32),
-      ),
-    );
-  }
-}
-
-class EmissionData {
-  final String name;
-  final String category;
-  final int quantity;
-  final int powerRating;
-  final int dailyUsage;
-  final int monthlyConsumption;
-  final double costPerKwh;
-  final int monthlyCost;
-  final int monthlySavings;
-
-  EmissionData(
-    this.name,
-    this.category,
-    this.quantity,
-    this.powerRating,
-    this.dailyUsage,
-    this.monthlyConsumption,
-    this.costPerKwh,
-    this.monthlyCost,
-    this.monthlySavings,
-  );
 }
