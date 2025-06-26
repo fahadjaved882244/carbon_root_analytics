@@ -97,7 +97,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
               GoRoute(
                 path: Routes.consoleReport,
-                builder: (context, state) => const CarbonReportPage(),
+                builder: (context, state) => const GenerateReportTab(),
               ),
               GoRoute(
                 path: Routes.consolePremium,

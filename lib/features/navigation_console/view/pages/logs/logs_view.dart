@@ -1,6 +1,6 @@
 import 'package:carbon_root_analytics/config/dependencies.dart';
 import 'package:carbon_root_analytics/features/company/domain/company_model.dart';
-import 'package:carbon_root_analytics/features/emission/ui/create_emission/view/create_emission_view.dart';
+import 'package:carbon_root_analytics/features/emission/ui/create_emission/view/create_emission_form_view.dart';
 import 'package:carbon_root_analytics/features/navigation_console/utils/media_query_extension.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/pages/logs/widgets/emission_expansion_panel.dart';
 import 'package:carbon_root_analytics/features/navigation_console/view/widgets/responsive_padding.dart';
@@ -15,6 +15,39 @@ class CompanyDetailsView extends ConsumerWidget {
     final company = ref.watch(readCompanyViewModelProvider);
 
     return Scaffold(
+      floatingActionButton: company.whenOrNull(
+        data: (company) {
+          if (company == null) {
+            return null;
+          }
+          return FloatingActionButton.extended(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  final content = CarbonCalculatorScreen(companyId: company.id);
+                  if (context.isPhone) {
+                    return Dialog.fullscreen(
+                      key: const Key('create_emission_fullscreen_dialog'),
+                      child: content,
+                    );
+                  } else {
+                    return Dialog(
+                      key: const Key('create_emission_dialog'),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 560),
+                        child: content,
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+            icon: const Icon(Icons.add),
+            label: Text('Add Emission Data'),
+          );
+        },
+      ),
       body: company.when(
         data: (company) {
           if (company == null) {
@@ -74,35 +107,6 @@ class CompanyDetailsView extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Expanded(child: EmissionExpansionPanel()),
-
-            Center(
-              child: FilledButton.tonalIcon(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      final content = CreateEmissionView(companyId: company.id);
-                      if (context.isPhone) {
-                        return Dialog.fullscreen(
-                          key: const Key('create_emission_fullscreen_dialog'),
-                          child: content,
-                        );
-                      } else {
-                        return Dialog(
-                          key: const Key('create_emission_dialog'),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 400),
-                            child: content,
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
-                icon: const Icon(Icons.add_chart),
-                label: const Text('Add Monthly Carbon Data'),
-              ),
-            ),
           ],
         ),
       ),
